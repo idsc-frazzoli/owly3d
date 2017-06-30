@@ -33,7 +33,6 @@ import ch.ethz.idsc.tensor.Scalars;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
-import ch.ethz.idsc.tensor.alg.Transpose;
 import ch.ethz.idsc.tensor.mat.Inverse;
 import ch.ethz.idsc.tensor.sca.Clip;
 
@@ -152,7 +151,7 @@ public class Owly3d {
           ejCar.addControl( //
               axes.Get(0).negate(), // delta
               Clip.UNIT.apply(axes.Get(1)), // brake
-              Clip.UNIT.apply(axes.Get(2).negate()), // handbrake
+              Clip.UNIT.apply(axes.Get(2)), // handbrake
               Clip.UNIT.apply(axes.Get(1).negate())); // throttle
         }
         {
@@ -257,7 +256,7 @@ public class Owly3d {
 
   private void render_scene() {
     AxesHelper.draw();
-    AxesHelper.checker(Transpose.of(ejCar.getSE3()).get(3));
+    AxesHelper.checker(ejCar.getSE3().get(Tensor.ALL, 3));
     // GL11.glFlush(); // p.20 <- start processing buffered opengl routines
     // new TreeRender3d(trajectoryPlanner.getDomainMap().values()).render();
     // new TrajectoryRender3d(trajectoryPlanner).render();

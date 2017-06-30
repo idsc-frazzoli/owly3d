@@ -27,4 +27,15 @@ public enum MatrixFunctions {
     }
     return matrix;
   }
+
+  public static Tensor getTranslation(Tensor position) {
+    // TODO make a bit faster
+    Tensor matrix = IdentityMatrix.of(4);
+    {
+      matrix.set(position.Get(0), 0, 3);
+      matrix.set(position.Get(1), 1, 3);
+      matrix.set(position.Get(2), 2, 3);
+    }
+    return matrix;
+  }
 }
