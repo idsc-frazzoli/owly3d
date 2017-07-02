@@ -1,16 +1,18 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
-import ch.ethz.idsc.owly.demo.car.CHatchbackModel;
 import ch.ethz.idsc.owly.demo.car.CarControl;
-import ch.ethz.idsc.owly.demo.car.CarModel;
 import ch.ethz.idsc.owly.demo.car.CarState;
 import ch.ethz.idsc.owly.demo.car.CarStateSpaceModel;
 import ch.ethz.idsc.owly.demo.car.CarStatic;
+import ch.ethz.idsc.owly.demo.car.CarSteering;
+import ch.ethz.idsc.owly.demo.car.HomogenousTrack;
+import ch.ethz.idsc.owly.demo.car.box.CHatchbackModel;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly.math.SingleIntegrator;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
-import ch.ethz.idsc.owly.math.flow.RungeKutta45Integrator;
+import ch.ethz.idsc.owly.math.flow.Integrator;
+import ch.ethz.idsc.owly.math.flow.RungeKutta4Integrator;
 import ch.ethz.idsc.owly.math.state.BoundedEpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.SimpleEpisodeIntegrator;
@@ -27,6 +29,7 @@ import ch.ethz.idsc.tensor.lie.Rodriguez;
 
 public class EjCar implements Animated, SE3Interface {
   private static final Tensor U_NULL = Array.zeros(4).unmodifiable();
+  private static final Integrator INTEGRATOR = RungeKutta4Integrator.INSTANCE;
   private static final Scalar MAX_TIME_STEP = RealScalar.of(.005);
   // ---
   private final EpisodeIntegrator pushIntegrator = new BoundedEpisodeIntegrator( //
@@ -38,15 +41,15 @@ public class EjCar implements Animated, SE3Interface {
       SingleIntegrator.INSTANCE, //
       EulerIntegrator.INSTANCE, //
       new StateTime(U_NULL, RealScalar.ZERO));
-  final CarModel carModel = new CHatchbackModel();
+  final CHatchbackModel carModel = new CHatchbackModel(CarSteering.BOTH, RealScalar.of(.5));
   private EpisodeIntegrator carIntegrator;
   private Tensor u = U_NULL;
 
   public EjCar() {
     CarState carState = CarStatic.x0_demo1();
     carIntegrator = new BoundedEpisodeIntegrator( //
-        new CarStateSpaceModel(carModel), //
-        RungeKutta45Integrator.INSTANCE, //
+        new CarStateSpaceModel(carModel, HomogenousTrack.DRY_ROAD), //
+        INTEGRATOR, //
         new StateTime(carState.asVector(), RealScalar.ZERO), //
         MAX_TIME_STEP);
   }
@@ -56,8 +59,8 @@ public class EjCar implements Animated, SE3Interface {
     Scalar now = carIntegrator.tail().time();
     CarState carState = CarStatic.x0_demo1();
     carIntegrator = new BoundedEpisodeIntegrator( //
-        new CarStateSpaceModel(carModel), //
-        RungeKutta45Integrator.INSTANCE, //
+        new CarStateSpaceModel(carModel, HomogenousTrack.DRY_ROAD), //
+        INTEGRATOR, //
         new StateTime(carState.asVector(), now), //
         MAX_TIME_STEP);
   }
