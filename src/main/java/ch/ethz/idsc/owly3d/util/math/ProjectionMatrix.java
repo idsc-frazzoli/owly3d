@@ -29,7 +29,7 @@ public enum ProjectionMatrix {
     matrix.set(f, 1, 1);
     matrix.set(zNear.add(zFar).divide(zNear.subtract(zFar)), 2, 2);
     matrix.set(zNear.multiply(zFar).multiply(RealScalar.of(2)).divide(zNear.subtract(zFar)), 2, 3);
-    matrix.set(RealScalar.NEGATIVE_ONE, 3, 2);
+    matrix.set(RealScalar.ONE.negate(), 3, 2);
     return matrix;
   }
 
