@@ -20,19 +20,13 @@ import ch.ethz.idsc.tensor.alg.Sort;
 import ch.ethz.idsc.tensor.lie.Rodriguez;
 
 public class EjCarDrawable extends EjCar implements Drawable {
-  private int count = 0;
-
-  // TODO draw more info about the car dynamics: slip, forces, momentum, throttle etc.
+  // TODO draw more info about the car dynamics: energy, momentum etc.
   @Override
   public void draw() {
     CarState carState = getCarState();
     CarControl carControl = getCarControl();
     Scalar mu = RealScalar.of(0.8); // friction coefficient on dry road
     TireForces tireForces = new TireForces(vehicleModel, carState, carControl, mu);
-    if (++count % 10 == 0) {
-      // System.out.println("VEL=" + carState.groundSpeed());
-      // System.out.println(carControl.asVector());
-    }
     GL11.glPushMatrix();
     {
       GL11.glMultMatrixd(Primitives2.matrix44(getSE3())); // JPH
@@ -40,34 +34,15 @@ public class EjCarDrawable extends EjCar implements Drawable {
         GL11.glBegin(GL11.GL_POLYGON);
         { // draw car foot print
           GL11.glColor4f(.7f, .7f, .5f, .2f);
-          // double xf = +carModel.frontL().number().doubleValue(); // TODO replace by functions
-          // double xb = -carModel.rearL().number().doubleValue();
-          // double yl = +carModel.width().number().doubleValue() / 2;
-          // double yr = -yl;
           double h = -.02;
-          for (Tensor vertex : vehicleModel.footprint()) {
+          for (Tensor vertex : vehicleModel.footprint())
             GL11.glVertex3d( //
                 vertex.Get(0).number().doubleValue(), //
                 vertex.Get(1).number().doubleValue(), //
                 h);
-          }
-          // GL11.glVertex3d(xb, yl, h);
-          // GL11.glVertex3d(xb, yr, h);
-          // GL11.glVertex3d(xf, yr, h);
         }
         GL11.glEnd();
-        // { // draw axle front and rear
-        // GL11.glColor4f(.7f, .7f, .5f, .4f);
-        // double xf = +carModel.lF().number().doubleValue();
-        // double xb = -carModel.lR().number().doubleValue();
-        // double yl = +carModel.lw().number().doubleValue();
-        // double yr = -yl;
-        // double height = .2;
-        // GL11.glVertex3d(xf, yl * DENT, height);
-        // GL11.glVertex3d(xb, yl, height);
-        // GL11.glVertex3d(xb, yr, height);
-        // GL11.glVertex3d(xf, yr * DENT, height);
-        // }
+        // ---
         GL11.glBegin(GL11.GL_QUADS);
         { // draw cogUnitV
           GL11.glColor4f(1, 1, 1, .4f);
@@ -111,10 +86,10 @@ public class EjCarDrawable extends EjCar implements Drawable {
           // deltas
           Tensor deltas = vehicleModel.angles(carControl.delta);
           Tensor wrate = carState.asVector().extract(6, 10);
-          for (int index = 0; index < 4; ++index) { // front left
+          for (int index = 0; index < vehicleModel.wheels(); ++index) { // front left
             GL11.glPushMatrix();
             {
-              Tensor lever = vehicleModel.tire(index).lever().copy();
+              Tensor lever = vehicleModel.wheel(index).lever().copy();
               { // body frame at tire at COG-height level
                 lever.set(scalar -> scalar.negate(), 2);
                 Tensor mat = MatrixFunctions.getTranslation(lever);
@@ -133,7 +108,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
               }
               { // draw lines of angular rate
                 Tensor vec = Array.zeros(3);
-                vec.set(vehicleModel.tire(index).lever().Get(2), 2); //
+                vec.set(vehicleModel.wheel(index).lever().Get(2), 2); //
                 Tensor mat = MatrixFunctions.getSE3( //
                     Rodriguez.of(Tensors.of(RealScalar.ZERO, RealScalar.ZERO, deltas.Get(index))), //
                     vec); // altitude == 0
@@ -141,13 +116,13 @@ public class EjCarDrawable extends EjCar implements Drawable {
                 GL11.glBegin(GL11.GL_LINES);
                 GL11.glColor4d(1, 0, 0, .7);
                 GL11.glVertex2d(0, 0);
-                GL11.glVertex2d(vehicleModel.tire(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
+                GL11.glVertex2d(vehicleModel.wheel(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
                 GL11.glEnd();
               }
               { // draw wheel
-                double w2 = vehicleModel.tire(index).width().number().doubleValue() / 2;
+                double w2 = vehicleModel.wheel(index).width().number().doubleValue() / 2;
                 GL11.glPushMatrix();
-                double radius = vehicleModel.tire(index).radius().number().doubleValue();
+                double radius = vehicleModel.wheel(index).radius().number().doubleValue();
                 Tensor mat = MatrixFunctions.getSE3( //
                     Rodriguez.of(Tensors.of(RealScalar.ZERO, angles.Get(index), RealScalar.ZERO)), //
                     Tensors.vector(0, 0, radius));

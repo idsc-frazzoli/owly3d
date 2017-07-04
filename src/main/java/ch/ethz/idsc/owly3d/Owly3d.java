@@ -60,6 +60,10 @@ public class Owly3d {
     // TODO p.28 search for equivalent to: glutInitDisplayMode(rgba, depth, double) ...?
   }
 
+  private static Scalar unit_one(Scalar convert) {
+    return convert.add(RealScalar.ONE).multiply(RealScalar.of(0.5));
+  }
+
   private void loop() {
     // This line is critical for LWJGL's interoperation with GLFW's
     // OpenGL context, or any context that is managed externally.
@@ -144,15 +148,25 @@ public class Owly3d {
               tensor.Get(1), //
               Clip.UNIT.apply(tensor.Get(0).negate()), // brake
               keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
+              Clip.UNIT.apply(tensor.Get(0)), //
               Clip.UNIT.apply(tensor.Get(0)));
         }
         {
+          // JoystickControl.printAxes();
           Tensor axes = JoystickControl.getAxes();
+          Scalar mono = Clip.UNIT.apply(axes.Get(1).negate());
+          // TODO based on joystick
+          // ejCar.addControl( //
+          // axes.Get(0).negate(), // delta
+          // Clip.UNIT.apply(axes.Get(1)), // brake
+          // Clip.UNIT.apply(axes.Get(2)), // handbrake
+          // mono, mono); // throttle
           ejCar.addControl( //
               axes.Get(0).negate(), // delta
               Clip.UNIT.apply(axes.Get(1)), // brake
-              Clip.UNIT.apply(axes.Get(2)), // handbrake
-              Clip.UNIT.apply(axes.Get(1).negate())); // throttle
+              RealScalar.ZERO, // handbrake
+              unit_one(axes.Get(2)), //
+              unit_one(axes.Get(5))); // throttle
         }
         {
           Tensor pose = ejCar.getSE3();
