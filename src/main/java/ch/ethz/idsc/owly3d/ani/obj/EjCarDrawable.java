@@ -16,6 +16,7 @@ import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
+import ch.ethz.idsc.tensor.alg.Sort;
 import ch.ethz.idsc.tensor.lie.Rodriguez;
 
 public class EjCarDrawable extends EjCar implements Drawable {
@@ -27,7 +28,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
     CarState carState = getCarState();
     CarControl carControl = getCarControl();
     Scalar mu = RealScalar.of(0.8); // friction coefficient on dry road
-    TireForces tireForces = new TireForces(carModel, carState, carControl, mu);
+    TireForces tireForces = new TireForces(vehicleModel, carState, carControl, mu);
     if (++count % 10 == 0) {
       // System.out.println("VEL=" + carState.groundSpeed());
       // System.out.println(carControl.asVector());
@@ -44,7 +45,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
           // double yl = +carModel.width().number().doubleValue() / 2;
           // double yr = -yl;
           double h = -.02;
-          for (Tensor vertex : carModel.footprint()) {
+          for (Tensor vertex : vehicleModel.footprint()) {
             GL11.glVertex3d( //
                 vertex.Get(0).number().doubleValue(), //
                 vertex.Get(1).number().doubleValue(), //
@@ -103,25 +104,18 @@ public class EjCarDrawable extends EjCar implements Drawable {
         Cylinder.drawZ(0, rate, .2, 20, 5, Tensors.vector(.8, .2, .2, 1));
         GL11.glPopMatrix();
       }
-      { // THROTTLE
-        double rate = carControl.throttle.number().doubleValue() * .001;
-        GL11.glPushMatrix();
-        GL11.glTranslatef(1 / 2, 0, 0);
-        Cylinder.drawZ(0, rate, .2, 20, 5, Tensors.vector(.8, .8, .2, 1));
-        GL11.glPopMatrix();
-      }
       { // TIRES
         final Tensor angles = getTireAngle();
         GL11.glLineWidth(2);
         {
           // deltas
-          Tensor deltas = carModel.angles(carControl.delta);
+          Tensor deltas = vehicleModel.angles(carControl.delta);
           Tensor wrate = carState.asVector().extract(6, 10);
           for (int index = 0; index < 4; ++index) { // front left
             GL11.glPushMatrix();
             {
+              Tensor lever = vehicleModel.tire(index).lever().copy();
               { // body frame at tire at COG-height level
-                Tensor lever = carModel.tire(index).lever().copy();
                 lever.set(scalar -> scalar.negate(), 2);
                 Tensor mat = MatrixFunctions.getTranslation(lever);
                 GL11.glMultMatrixd(Primitives2.matrix44(mat));
@@ -139,7 +133,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
               }
               { // draw lines of angular rate
                 Tensor vec = Array.zeros(3);
-                vec.set(carModel.tire(index).lever().Get(2), 2); //
+                vec.set(vehicleModel.tire(index).lever().Get(2), 2); //
                 Tensor mat = MatrixFunctions.getSE3( //
                     Rodriguez.of(Tensors.of(RealScalar.ZERO, RealScalar.ZERO, deltas.Get(index))), //
                     vec); // altitude == 0
@@ -147,17 +141,28 @@ public class EjCarDrawable extends EjCar implements Drawable {
                 GL11.glBegin(GL11.GL_LINES);
                 GL11.glColor4d(1, 0, 0, .7);
                 GL11.glVertex2d(0, 0);
-                GL11.glVertex2d(carModel.tire(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
+                GL11.glVertex2d(vehicleModel.tire(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
                 GL11.glEnd();
               }
               { // draw wheel
+                double w2 = vehicleModel.tire(index).width().number().doubleValue() / 2;
                 GL11.glPushMatrix();
-                double radius = carModel.tire(index).radius().number().doubleValue();
+                double radius = vehicleModel.tire(index).radius().number().doubleValue();
                 Tensor mat = MatrixFunctions.getSE3( //
                     Rodriguez.of(Tensors.of(RealScalar.ZERO, angles.Get(index), RealScalar.ZERO)), //
                     Tensors.vector(0, 0, radius));
                 GL11.glMultMatrixd(Primitives2.matrix44(mat));
-                Cylinder.drawY(-.1, .1, radius, 30, 15, Tensors.vector(0, 1, 0, .8));
+                Cylinder.drawY(-w2, w2, radius, 30, 15, Tensors.vector(0, 1, 0, .8));
+                { // throttle, torque on tire
+                  double rate = carControl.throttleV.Get(index).number().doubleValue() * .003;
+                  Tensor vec = Tensors.vector(w2, w2 + rate);
+                  boolean left = 0 < lever.Get(1).number().doubleValue();
+                  Tensor res = Sort.of(left ? vec : vec.negate());
+                  Cylinder.drawY( //
+                      res.Get(0).number().doubleValue(), //
+                      res.Get(1).number().doubleValue(), //
+                      radius * .3, 30, 15, Tensors.vector(1, 1, 0, .8));
+                }
                 GL11.glPopMatrix();
               }
             }
