@@ -3,18 +3,9 @@ package ch.ethz.idsc.owly3d.util.gfx;
 
 import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-
 import org.lwjgl.opengl.GL20;
 
 public class Shader {
-  public static Shader of(File file, int type) throws IOException {
-    String vString = new String(Files.readAllBytes(file.toPath()));
-    return new Shader(vString, type);
-  }
-
   public final int shader;
 
   Shader(String string, int type) {

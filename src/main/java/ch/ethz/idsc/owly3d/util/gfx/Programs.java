@@ -28,23 +28,6 @@ public enum Programs {
     return new Program( //
         new Shader(vstr, GL_VERTEX_SHADER).shader, //
         new Shader(fstr, GL_FRAGMENT_SHADER).shader);
+    // TODO free shader resources after creating program
   }
-  // public static Program of2(String resource) throws IOException {
-  // // createShader(filename+".vs", );
-  // int vshader;
-  // {
-  // URL url = Thread.currentThread().getContextClassLoader().getResource(resource + ".vs");
-  // File file = new File(url.getFile());
-  // vshader = Shader.of(file, GL_VERTEX_SHADER).shader;
-  // }
-  // int fshader;
-  // {
-  // URL url = Thread.currentThread().getContextClassLoader().getResource(resource + ".fs");
-  // File file = new File(url.getFile());
-  // fshader = Shader.of(file, GL_FRAGMENT_SHADER).shader;
-  // }
-  // // int fshader = createShader(filename+".fs", GL_FRAGMENT_SHADER);
-  // // int program = createProgram(vshader, fshader);
-  // return Program.of(vshader, fshader);
-  // }
 }

@@ -8,10 +8,6 @@ import static org.lwjgl.opengl.GL20.glGetProgrami;
 import org.lwjgl.opengl.GL20;
 
 public class Program {
-  public static Program of(int vs, int fs) {
-    return new Program(vs, fs);
-  }
-
   public final int program;
 
   Program(int vs, int fs) {

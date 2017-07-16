@@ -48,16 +48,4 @@ public class KeyboardControl {
   public Scalar pressed(int id) {
     return RealScalar.of(keyHander.pressed(id));
   }
-
-  public boolean isPressed(int id) {
-    return keyHander.pressed(id) != 0;
-  }
-
-  public boolean isHit(int id) {
-    return keyHander.hit(id) != 0;
-  }
-
-  public void reset() {
-    keyHander.reset();
-  }
 }
