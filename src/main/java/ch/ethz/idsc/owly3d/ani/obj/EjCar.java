@@ -5,10 +5,9 @@ import ch.ethz.idsc.owly.demo.car.CarControl;
 import ch.ethz.idsc.owly.demo.car.CarState;
 import ch.ethz.idsc.owly.demo.car.CarStateSpaceModel;
 import ch.ethz.idsc.owly.demo.car.CarStatic;
-import ch.ethz.idsc.owly.demo.car.CarSteering;
 import ch.ethz.idsc.owly.demo.car.HomogenousTrack;
 import ch.ethz.idsc.owly.demo.car.VehicleModel;
-import ch.ethz.idsc.owly.demo.car.box.CHatchbackModel;
+import ch.ethz.idsc.owly.demo.car.box.RimoSinusIonModel;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly.math.SingleIntegrator;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
@@ -45,8 +44,8 @@ public class EjCar implements Animated, SE3Interface {
       EulerIntegrator.INSTANCE, //
       new StateTime(TIRE_N, RealScalar.ZERO));
   final VehicleModel vehicleModel = //
-      // RimoSinusIonModel.standard();
-      new CHatchbackModel(CarSteering.BOTH, RealScalar.of(.5));
+      RimoSinusIonModel.standard();
+  // new CHatchbackModel(CarSteering.BOTH, RealScalar.of(.5));
   private EpisodeIntegrator carIntegrator;
   private Tensor u = U_NULL;
 

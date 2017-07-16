@@ -1,72 +1,38 @@
 // code by jph
 package ch.ethz.idsc.owly3d.util.gfx;
 
+import static org.lwjgl.opengl.GL20.GL_COMPILE_STATUS;
+
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 
 import org.lwjgl.opengl.GL20;
 
 public class Shader {
-  public static Shader of(File vfile, File ffile) {
-    // System.out.println("SHADER");
-    // System.out.println(vfile.exists());
-    // System.out.println(ffile.exists());
-    try {
-      String vString = new String(Files.readAllBytes(vfile.toPath()));
-      String fString = new String(Files.readAllBytes(ffile.toPath()));
-      // System.out.println(vString);
-      // System.out.println(fString);
-      return new Shader(vString, fString);
-    } catch (Exception exception) {
-      exception.printStackTrace();
-    }
-    return null;
+  public static Shader of(File file, int type) throws IOException {
+    String vString = new String(Files.readAllBytes(file.toPath()));
+    return new Shader(vString, type);
   }
 
-  // int vsid;
-  // int fsid;
-  public final int program;
+  public final int shader;
 
-  private Shader(String vString, String fString) {
-    int vsid = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
-    int fsid = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+  Shader(String string, int type) {
+    shader = GL20.glCreateShader(type);
     // System.out.println("shaders " + vsid + " " + fsid);
-    compile(vsid, vString);
-    compile(fsid, fString);
-    // ---
-    program = GL20.glCreateProgram();
-    GL20.glAttachShader(program, vsid);
-    GL20.glAttachShader(program, fsid);
-    GL20.glLinkProgram(program);
-    // ---
+    GL20.glShaderSource(shader, string);
+    GL20.glCompileShader(shader);
     // int status =
-    GL20.glGetProgrami(program, GL20.GL_LINK_STATUS);
-    // System.out.println("link=" + status);
-    String log = GL20.glGetProgramInfoLog(program);
-    if (!log.isEmpty()) {
-      System.out.println(log);
-      throw new RuntimeException(log);
-    }
-    GL20.glDetachShader(program, vsid);
-    GL20.glDetachShader(program, fsid);
-    GL20.glDeleteShader(vsid);
-    GL20.glDeleteShader(fsid);
-  }
-
-  private static void compile(int id, String string) {
-    GL20.glShaderSource(id, string);
-    GL20.glCompileShader(id);
-    // int status =
-    GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS);
+    // GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS);
+    int compiled = GL20.glGetShaderi(shader, GL_COMPILE_STATUS);
     // System.out.println("status=" + status);
-    String log = GL20.glGetShaderInfoLog(id);
+    String log = GL20.glGetShaderInfoLog(shader);
     if (!log.isEmpty()) {
       System.out.println(log);
       throw new RuntimeException(log);
     }
-  }
-
-  public void load() {
-    GL20.glUseProgram(program); // TODO use function
+    if (compiled == 0) {
+      throw new AssertionError("Could not compile shader");
+    }
   }
 }

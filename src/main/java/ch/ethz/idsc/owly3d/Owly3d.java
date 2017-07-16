@@ -2,11 +2,20 @@
 // code by jph
 package ch.ethz.idsc.owly3d;
 
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
+import static org.lwjgl.opengl.GL11.glVertexPointer;
+import static org.lwjgl.opengl.GL20.glUseProgram;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.FloatBuffer;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
 import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
@@ -22,6 +31,8 @@ import ch.ethz.idsc.owly3d.mesh.MeshFormat;
 import ch.ethz.idsc.owly3d.sim.TimeKeeper;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.Primitives2;
+import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
+import ch.ethz.idsc.owly3d.util.gfx.Programs;
 import ch.ethz.idsc.owly3d.util.usr.JoystickControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
@@ -115,6 +126,12 @@ public class Owly3d {
     // );
     // final int matrixID = GL20.glGetUniformLocation(shader03.program, "MVP");
     // System.out.println("shader = " + shader03.program + " MVP=" + matrixID);
+    try {
+      CubemapUtils.createCubemapTexture("cube/space/space_", true);
+      createCubemapProgram();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     Mesh cubesn = MeshFormat.read(new File("/home/datahaki/Documents/models/cubesn"));
     TimeKeeper timeKeeper = new TimeKeeper();
     while (!GLFW.glfwWindowShouldClose(windowObject.window)) {
@@ -148,8 +165,8 @@ public class Owly3d {
               tensor.Get(1), //
               Clip.UNIT.apply(tensor.Get(0).negate()), // brake
               keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
-              Clip.UNIT.apply(tensor.Get(0)), //
-              Clip.UNIT.apply(tensor.Get(0)));
+              keyboardControl.pressed(GLFW.GLFW_KEY_W), //
+              keyboardControl.pressed(GLFW.GLFW_KEY_Q));
         }
         {
           // JoystickControl.printAxes();
@@ -161,12 +178,13 @@ public class Owly3d {
           // Clip.UNIT.apply(axes.Get(1)), // brake
           // Clip.UNIT.apply(axes.Get(2)), // handbrake
           // mono, mono); // throttle
-          ejCar.addControl( //
-              axes.Get(0).negate(), // delta
-              Clip.UNIT.apply(axes.Get(1)), // brake
-              RealScalar.ZERO, // handbrake
-              unit_one(axes.Get(2)), //
-              unit_one(axes.Get(5))); // throttle
+          if (false) // FIXME
+            ejCar.addControl( //
+                axes.Get(0).negate(), // delta
+                Clip.UNIT.apply(axes.Get(1)), // brake
+                RealScalar.ZERO, // handbrake
+                unit_one(axes.Get(2)), //
+                unit_one(axes.Get(5))); // throttle
         }
         {
           Tensor pose = ejCar.getSE3();
@@ -215,6 +233,30 @@ public class Owly3d {
           GL11.glMultMatrixd(Primitives2.matrix44(matrix)); // confirmed
         }
       }
+      {
+        FloatBuffer fb = FloatBuffer.wrap(new float[16]);
+        fb.put(0.23510265f);
+        fb.put(0);
+        fb.put(0);
+        fb.put(0);
+        // ---
+        fb.put(0);
+        fb.put(0.17632699f);
+        fb.put(0);
+        fb.put(0);
+        // ---
+        fb.put(0);
+        fb.put(0);
+        fb.put(0);
+        fb.put(-4.9999f);
+        // ---
+        fb.put(0);
+        fb.put(0);
+        fb.put(-1);
+        fb.put(5.0001f);
+        fb.flip();
+        GL20.glUniformMatrix4fv(cubemap_invViewProjUniform, false, fb);
+      }
       // GL11.glCullFace(GL11.GL_BACK); // confirmed
       {
         // Mesh mesh = new Mesh();
@@ -225,6 +267,7 @@ public class Owly3d {
         // mesh.draw();
         render_scene();
         // mesh.drawTest();
+        drawCubemap();
       }
       // {
       // for (int c = 1; c < 10; ++c) {
@@ -266,6 +309,26 @@ public class Owly3d {
       // invoked during this call.
       GLFW.glfwPollEvents(); // also for joystick...(?)
     }
+  }
+
+  private int cubemapProgram;
+  private int cubemap_invViewProjUniform;
+
+  private void createCubemapProgram() throws IOException {
+    int program = Programs.of("cubemap.vfs").program;
+    GL20.glUseProgram(program);
+    int texLocation = GL20.glGetUniformLocation(program, "tex");
+    GL20.glUniform1i(texLocation, 0); // specifies texture index as 0, not sure why 0?
+    cubemap_invViewProjUniform = GL20.glGetUniformLocation(program, "invViewProj");
+    GL20.glUseProgram(0);
+    cubemapProgram = program;
+  }
+
+  private void drawCubemap() {
+    glUseProgram(cubemapProgram);
+    glVertexPointer(2, GL_FLOAT, 0, CubemapUtils.quadVertices);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glUseProgram(0);
   }
 
   private void render_scene() {
