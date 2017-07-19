@@ -51,7 +51,7 @@ public enum Cylinder {
   }
 
   public static void drawY(double gnd, double hgt, double rad, int slices, int swp, Tensor mas) {
-    if (gnd >= hgt)
+    if (gnd > hgt)
       throw new RuntimeException();
     double fac = Math.PI * 2 / slices;
     double lam = 0;

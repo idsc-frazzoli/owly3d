@@ -6,10 +6,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 public class Renderer {
-  public static void prepare() {
-    // GL11.glClearColor(1, green, blue, alpha);
-  }
-
   public static void render(RawModel model) {
     GL30.glBindVertexArray(model.vaoID);
     GL20.glEnableVertexAttribArray(0); // TODO

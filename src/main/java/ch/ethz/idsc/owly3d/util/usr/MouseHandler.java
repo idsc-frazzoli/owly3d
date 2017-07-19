@@ -49,6 +49,7 @@ public class MouseHandler {
     }
   };
 
+  // TODO design is not so good
   public Tensor drag(boolean reset) {
     Tensor drag = Tensors.vector(drag_x, drag_y);
     if (reset) {
