@@ -7,7 +7,7 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.retina.dev.velodyne.HDL32EFiringCollector;
+import ch.ethz.idsc.retina.dev.hdl32e.HDL32EFiringCollector;
 
 /** draws a single triangle using GL11.glDrawArrays */
 public class LaserPointCloud {

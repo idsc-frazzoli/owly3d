@@ -47,10 +47,10 @@ public class Example2_18 {
   }
 
   public void draw() {
-     GL11.glColor3f(1, 1, 1);
-     GL11.glInterleavedArrays(GL11.GL_V3F, 0, fb);
-     GL11.glDrawElements(GL11.GL_QUADS, intBuffer);
-//     GL11.glVerP
-//    GL11.glDrawElements(GL11.GL_QUADS, 4, GL11.GL_INT, 0);
+    GL11.glColor3f(1, 1, 1);
+    GL11.glInterleavedArrays(GL11.GL_V3F, 0, fb);
+    GL11.glDrawElements(GL11.GL_QUADS, intBuffer);
+    // GL11.glVerP
+    // GL11.glDrawElements(GL11.GL_QUADS, 4, GL11.GL_INT, 0);
   }
 }

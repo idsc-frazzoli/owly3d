@@ -45,7 +45,7 @@ import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
 import ch.ethz.idsc.owly3d.util.usr.MouseControl;
 import ch.ethz.idsc.owly3d.util.usr.MouseHandler;
-import ch.ethz.idsc.retina.dev.velodyne.LaserPositionConsumer;
+import ch.ethz.idsc.retina.dev.hdl32e.LaserPositionConsumer;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -134,8 +134,10 @@ public class Owly3d {
     example2_17.init();
     final DemoPointCloud demoPointCloud = new DemoPointCloud();
     laserPointCloud = new LaserPointCloud();
-    LaserPcalPlayback laserPcalPlayback = new LaserPcalPlayback(laserPositionConsumer);
-    laserPcalPlayback.thread.start();
+    // LaserPcalPlayback laserPcalPlayback = new LaserPcalPlayback(laserPositionConsumer);
+    // laserPcalPlayback.thread.start();
+    LiveLaser liveLaser = new LiveLaser(laserPositionConsumer);
+    liveLaser.thread.start();
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
@@ -294,6 +296,7 @@ public class Owly3d {
       if (keyboardHander.hit(GLFW.GLFW_KEY_ESCAPE))
         GLFW.glfwSetWindowShouldClose(windowObject.window, true); // We will detect this in the rendering loop
     }
+    liveLaser.isLaunched = false;
   }
 
   LaserPositionConsumer laserPositionConsumer = new LaserPositionConsumer() {
