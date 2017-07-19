@@ -41,6 +41,18 @@ public enum ProjectionMatrix {
     System.out.println(Pretty.of(matrix));
   }
 
+  /** ---
+   * 4.253E+0 0.000E+0 0.000E+0 0.000E+0
+   * 0.000E+0 5.671E+0 0.000E+0 0.000E+0
+   * 0.000E+0 0.000E+0 -1.000E+0 -2.000E-1
+   * 0.000E+0 0.000E+0 -1.000E+0 0.000E+0 */
+  /** ---
+   * [
+   * [ 1.83 0.00 0.00 0.00 ]
+   * [ 0.00 1.83 0.00 0.00 ]
+   * [ 0.00 0.00 -1.02 -2.02 ]
+   * [ 0.00 0.00 -1.00 0.00 ]
+   * ] */
   public static void main(String[] args) {
     System.out.println(Pretty.of(perspective(1, 1, 1, 100).map(Round._2)));
   }

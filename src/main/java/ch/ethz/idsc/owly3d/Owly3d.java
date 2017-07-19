@@ -4,6 +4,7 @@ package ch.ethz.idsc.owly3d;
 
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_VERTEX_ARRAY;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glVertexPointer;
 import static org.lwjgl.opengl.GL20.glUseProgram;
@@ -12,7 +13,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -29,16 +29,23 @@ import ch.ethz.idsc.owly3d.ani.obj.Rice2MoverDrawable;
 import ch.ethz.idsc.owly3d.ani.obj.Se2Car;
 import ch.ethz.idsc.owly3d.ani.obj.Se2CarDrawable;
 import ch.ethz.idsc.owly3d.ani.obj.Tracker;
+import ch.ethz.idsc.owly3d.demo.DemoPointCloud;
+import ch.ethz.idsc.owly3d.demo.DemoTriangle1;
+import ch.ethz.idsc.owly3d.demo.DemoTriangle2;
+import ch.ethz.idsc.owly3d.demo.Example2_17;
+import ch.ethz.idsc.owly3d.demo.LaserPointCloud;
 import ch.ethz.idsc.owly3d.sim.TimeKeeper;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.Primitives2;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
 import ch.ethz.idsc.owly3d.util.gfx.Programs;
+import ch.ethz.idsc.owly3d.util.gfx.ShipProgram;
 import ch.ethz.idsc.owly3d.util.usr.JoystickControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
 import ch.ethz.idsc.owly3d.util.usr.MouseControl;
 import ch.ethz.idsc.owly3d.util.usr.MouseHandler;
+import ch.ethz.idsc.retina.dev.velodyne.LaserPositionConsumer;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -46,11 +53,11 @@ import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.mat.Inverse;
-import ch.ethz.idsc.tensor.pdf.DiscreteUniformDistribution;
-import ch.ethz.idsc.tensor.pdf.RandomVariate;
 import ch.ethz.idsc.tensor.sca.Clip;
 
 public class Owly3d {
+  final boolean cameraOverEjcar = false;
+  // ---
   Window windowObject = new Window();
   Avatar avatar;
   Tracker tracker;
@@ -78,6 +85,8 @@ public class Owly3d {
     return convert.add(RealScalar.ONE).multiply(RealScalar.of(0.5));
   }
 
+  LaserPointCloud laserPointCloud;
+
   private void loop() {
     // This line is critical for LWJGL's interoperation with GLFW's
     // OpenGL context, or any context that is managed externally.
@@ -100,6 +109,7 @@ public class Owly3d {
     scenario.add(rice2Mover);
     tracker = new Tracker(Array.zeros(6));
     scenario.add(tracker);
+    GL11.glEnableClientState(GL_VERTEX_ARRAY);
     // ---
     GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     GL11.glEnable(GL11.GL_BLEND);
@@ -117,12 +127,25 @@ public class Owly3d {
     }
     // GL11.glEnable(GL44.GL_MAX_VERTEX_ATTRIB_STRIDE);
     Texture.bind();
-    DemoTriangle dt = new DemoTriangle();
+    final DemoTriangle1 demoTriangle1 = new DemoTriangle1();
+    demoTriangle1.init();
+    final DemoTriangle2 demoTriangle2 = new DemoTriangle2();
+    Example2_17 example2_17 = new Example2_17();
+    example2_17.init();
+    final DemoPointCloud demoPointCloud = new DemoPointCloud();
+    laserPointCloud = new LaserPointCloud();
+    LaserPcalPlayback laserPcalPlayback = new LaserPcalPlayback(laserPositionConsumer);
+    laserPcalPlayback.thread.start();
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
     } catch (IOException e) {
       e.printStackTrace();
+    }
+    try {
+      new ShipProgram("program/ship.vfs");
+    } catch (Exception exception) {
+      exception.printStackTrace();
     }
     TimeKeeper timeKeeper = new TimeKeeper();
     while (!GLFW.glfwWindowShouldClose(windowObject.window)) {
@@ -193,16 +216,19 @@ public class Owly3d {
       );
       GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL); // confirmed
       // ---
-      if (false) {
+      if (true) {
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // confirmed
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION); // confirmed
         GL11.glLoadIdentity();
         // TODO glu Ortho2D
         GL11.glRasterPos2i(30, 30);
-        Tensor vec = RandomVariate.of(DiscreteUniformDistribution.of(0, 256 * 255 * 255), 10 * 10);
-        IntBuffer pixels = BufferUtils.createIntBuffer(vec.length());
-        GL11.glDrawPixels(10, 10, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
+        // Tensor vec = RandomVariate.of(DiscreteUniformDistribution.of(0, 256 * 255 * 255), 10 * 10);
+        ByteBuffer pixels = BufferUtils.createByteBuffer(10000);
+        for (int c = 0; c < 10000; ++c)
+          pixels.put((byte) 128);
+        pixels.flip();
+        GL11.glDrawPixels(20, 10, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
       }
       windowObject.setViewportAndPerspective();
       { // camera
@@ -210,14 +236,11 @@ public class Owly3d {
         GL11.glLoadIdentity();
         {
           Tensor mat = scenario.cameraMatrix();
-          // Tensor pose = ;
-          // Tensor src = pose.dot(Tensors.vector(-5, 0, 3, 1));
-          // Tensor dst = Transpose.of(ejCar.getSE3()).get(3);
-          Tensor car = ejCar.getSE3();
-          mat.set(car.Get(0, 3), 0, 3);
-          mat.set(car.Get(1, 3).add(RealScalar.of(-0)), 1, 3);
-          // Tensor src = Transpose.of(avatar.getSE3()).get(3);
-          // mat = ModelviewMatrix.lookAt(src, dst);
+          if (cameraOverEjcar) {
+            Tensor car = ejCar.getSE3();
+            mat.set(car.Get(0, 3), 0, 3);
+            mat.set(car.Get(1, 3).add(RealScalar.of(-0)), 1, 3);
+          }
           Tensor matrix = Inverse.of(mat);
           GL11.glMultMatrixd(Primitives2.matrix44(matrix)); // confirmed
         }
@@ -253,6 +276,11 @@ public class Owly3d {
       // GL11.glCullFace(GL11.GL_BACK); // confirmed
       {
         render_scene();
+        // demoTriangle1.draw();
+        // demoTriangle2.draw();
+        // example2_17.draw();
+        // demoPointCloud.draw();
+        laserPointCloud.draw();
         // mesh.drawTest();
         // drawCubemap(); // TODO
       }
@@ -268,6 +296,17 @@ public class Owly3d {
     }
   }
 
+  LaserPositionConsumer laserPositionConsumer = new LaserPositionConsumer() {
+    @Override
+    public void digest(float[] position_data, int length) {
+      try {
+        laserPointCloud.fill(position_data, length);
+        Thread.sleep(200); // 5 Hz
+      } catch (Exception exception) {
+        exception.printStackTrace();
+      }
+    }
+  };
   private int cubemapProgram;
   private int cubemap_invViewProjUniform;
 
