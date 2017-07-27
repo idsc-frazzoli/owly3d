@@ -9,7 +9,7 @@ import ch.ethz.idsc.owly.demo.car.HomogenousTrack;
 import ch.ethz.idsc.owly.demo.car.VehicleModel;
 import ch.ethz.idsc.owly.demo.car.box.RimoSinusIonModel;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
-import ch.ethz.idsc.owly.math.SingleIntegrator;
+import ch.ethz.idsc.owly.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owly.math.flow.Integrator;
 import ch.ethz.idsc.owly.math.flow.RungeKutta4Integrator;
@@ -40,7 +40,7 @@ public class EjCar implements Animated, SE3Interface {
       MAX_TIME_STEP);
   // absolute wheel angles, only used for display -> accuracy has low priority
   private final EpisodeIntegrator tireIntegrator = new SimpleEpisodeIntegrator( //
-      SingleIntegrator.INSTANCE, //
+      SingleIntegratorStateSpaceModel.INSTANCE, //
       EulerIntegrator.INSTANCE, //
       new StateTime(TIRE_N, RealScalar.ZERO));
   final VehicleModel vehicleModel = //

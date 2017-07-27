@@ -45,7 +45,10 @@ import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
 import ch.ethz.idsc.owly3d.util.usr.MouseControl;
 import ch.ethz.idsc.owly3d.util.usr.MouseHandler;
-import ch.ethz.idsc.retina.dev.hdl32e.LaserPositionConsumer;
+import ch.ethz.idsc.retina.dev.hdl32e.Hdl32eFiringProvider;
+import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionCollector;
+import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionListener;
+import ch.ethz.idsc.retina.dev.hdl32e.LiveHdl32eFiringProvider;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -136,8 +139,13 @@ public class Owly3d {
     laserPointCloud = new LaserPointCloud();
     // LaserPcalPlayback laserPcalPlayback = new LaserPcalPlayback(laserPositionConsumer);
     // laserPcalPlayback.thread.start();
-    LiveLaser liveLaser = new LiveLaser(laserPositionConsumer);
-    liveLaser.thread.start();
+    Hdl32eFiringProvider liveLaser = //
+        new LiveHdl32eFiringProvider(new Hdl32ePositionCollector(hdl32ePositionListener));
+    // new PcalHdl32ePositionProvider(hdl32ePositionListener, //
+    // new File( //
+    // "/media/datahaki/media/ethz/sensors/velodyne01/usb/Velodyne/HDL-32E Sample Data", //
+    // "HDL32-V2_R into Butterfield into Digital Drive.pcap"));
+    liveLaser.start();
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
@@ -296,10 +304,10 @@ public class Owly3d {
       if (keyboardHander.hit(GLFW.GLFW_KEY_ESCAPE))
         GLFW.glfwSetWindowShouldClose(windowObject.window, true); // We will detect this in the rendering loop
     }
-    liveLaser.isLaunched = false;
+    liveLaser.stop();
   }
 
-  LaserPositionConsumer laserPositionConsumer = new LaserPositionConsumer() {
+  Hdl32ePositionListener hdl32ePositionListener = new Hdl32ePositionListener() {
     @Override
     public void digest(float[] position_data, int length) {
       try {

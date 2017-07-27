@@ -7,11 +7,11 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.retina.dev.hdl32e.HDL32EFiringCollector;
+import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionCollector;
 
 /** draws a single triangle using GL11.glDrawArrays */
 public class LaserPointCloud {
-  public static final int LENGTH = HDL32EFiringCollector.POINT_NUMEL;
+  public static final int LENGTH = Hdl32ePositionCollector.POINT_NUMEL;
   // ---
   private FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(3 * LENGTH);
   private final IntBuffer intBuffer = BufferUtils.createIntBuffer(LENGTH);
