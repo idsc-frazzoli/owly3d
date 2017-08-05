@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import ch.ethz.idsc.owly.data.TimeKeeper;
 import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.ani.obj.EjCar;
@@ -34,7 +35,6 @@ import ch.ethz.idsc.owly3d.demo.DemoTriangle1;
 import ch.ethz.idsc.owly3d.demo.DemoTriangle2;
 import ch.ethz.idsc.owly3d.demo.Example2_17;
 import ch.ethz.idsc.owly3d.demo.LaserPointCloud;
-import ch.ethz.idsc.owly3d.sim.TimeKeeper;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.Primitives2;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;

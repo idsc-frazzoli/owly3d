@@ -3,7 +3,7 @@ package ch.ethz.idsc.owly3d.util;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.math.noise.SimplexNoise;
+import ch.ethz.idsc.retina.util.math.SimplexNoise;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;

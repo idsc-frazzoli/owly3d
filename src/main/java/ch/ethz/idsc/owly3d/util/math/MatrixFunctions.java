@@ -7,7 +7,6 @@ import ch.ethz.idsc.tensor.mat.IdentityMatrix;
 public enum MatrixFunctions {
   ;
   public static Tensor getSE3(Tensor rotation, Tensor position) {
-    // TODO make a bit faster
     Tensor matrix = IdentityMatrix.of(4);
     {
       matrix.set(rotation.Get(0, 0), 0, 0);
@@ -29,7 +28,6 @@ public enum MatrixFunctions {
   }
 
   public static Tensor getTranslation(Tensor position) {
-    // TODO make a bit faster
     Tensor matrix = IdentityMatrix.of(4);
     {
       matrix.set(position.Get(0), 0, 3);

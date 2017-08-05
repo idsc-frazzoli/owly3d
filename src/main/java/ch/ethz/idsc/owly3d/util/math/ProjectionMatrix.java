@@ -23,7 +23,7 @@ public enum ProjectionMatrix {
 
   // https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml
   public static Tensor perspective(Scalar fovy, Scalar aspect, Scalar zNear, Scalar zFar) {
-    Scalar f = Tan.of(fovy.multiply(RationalScalar.of(1, 2))).invert();
+    Scalar f = Tan.of(fovy.multiply(RationalScalar.of(1, 2))).reciprocal();
     Tensor matrix = Array.zeros(4, 4);
     matrix.set(f.divide(aspect), 0, 0);
     matrix.set(f, 1, 1);

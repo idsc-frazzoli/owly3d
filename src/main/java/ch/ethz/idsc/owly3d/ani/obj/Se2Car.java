@@ -2,7 +2,7 @@
 package ch.ethz.idsc.owly3d.ani.obj;
 
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
-import ch.ethz.idsc.owly.demo.se2r.Se2rStateSpaceModel;
+import ch.ethz.idsc.owly.demo.se2.Se2StateSpaceModel;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owly.math.flow.RungeKutta4Integrator;
 import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
@@ -34,7 +34,7 @@ public class Se2Car implements Animated, SE3Interface {
   /** @param state {x, y, theta} */
   public Se2Car(Tensor state, Scalar maxSpeed) {
     se2Integrator = new SimpleEpisodeIntegrator( //
-        Se2rStateSpaceModel.INSTANCE, //
+        Se2StateSpaceModel.INSTANCE, //
         RungeKutta4Integrator.INSTANCE, //
         new StateTime(state, RealScalar.ZERO));
     this.maxSpeed = maxSpeed;
@@ -48,7 +48,7 @@ public class Se2Car implements Animated, SE3Interface {
   @Override
   public void integrate(Scalar now) {
     pushIntegrator.move(u, now);
-    se2Integrator.move(pushIntegrator.tail().x(), now);
+    se2Integrator.move(pushIntegrator.tail().state(), now);
   }
 
   @Override
@@ -64,7 +64,7 @@ public class Se2Car implements Animated, SE3Interface {
 
   /** @return delta, speed */
   public Tensor getU() {
-    return pushIntegrator.tail().x();
+    return pushIntegrator.tail().state();
   }
 
   public StateTime getStateTime() {
@@ -73,7 +73,7 @@ public class Se2Car implements Animated, SE3Interface {
 
   @Override
   public Tensor getSE3() {
-    Tensor state = getStateTime().x();
+    Tensor state = getStateTime().state();
     Tensor rotation = Rodriguez.of( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, state.Get(2)));
     return MatrixFunctions.getSE3( //

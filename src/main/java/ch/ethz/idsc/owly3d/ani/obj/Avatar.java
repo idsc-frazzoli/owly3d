@@ -58,7 +58,7 @@ public class Avatar implements Animated, SE3Interface {
       rateIntegrator.move(u_rot, now);
       StateTime rate = rateIntegrator.tail();
       // ---
-      Tensor drag = rate.x();
+      Tensor drag = rate.state();
       rotation = rotation.dot(Rodriguez.of(drag));
       boolean status = OrthogonalMatrixQ.of(rotation);
       if (!status)
@@ -83,6 +83,6 @@ public class Avatar implements Animated, SE3Interface {
   /** @return inverse of model view matrix */
   @Override
   public Tensor getSE3() {
-    return MatrixFunctions.getSE3(rotation, posVelIntegrator.tail().x());
+    return MatrixFunctions.getSE3(rotation, posVelIntegrator.tail().state());
   }
 }
