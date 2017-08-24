@@ -208,10 +208,10 @@ public class Owly3d {
           // TODO based on joystick
           // ejCar.addControl( //
           // axes.Get(0).negate(), // delta
-          // Clip.UNIT.apply(axes.Get(1)), // brake
-          // Clip.UNIT.apply(axes.Get(2)), // handbrake
+          // Clip.unit().apply(axes.Get(1)), // brake
+          // Clip.unit().apply(axes.Get(2)), // handbrake
           // mono, mono); // throttle
-          if (false) // FIXME
+          if (true) // FIXME
             ejCar.addControl( //
                 axes.Get(0).negate(), // delta
                 Clip.unit().apply(axes.Get(1)), // brake
