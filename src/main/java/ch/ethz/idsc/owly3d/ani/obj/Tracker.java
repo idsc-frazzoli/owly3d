@@ -52,11 +52,11 @@ public class Tracker implements Animated, SE3Interface {
   /** @return inverse of model view matrix */
   @Override
   public Tensor getSE3() {
-    return MatrixFunctions.getSE3(IdentityMatrix.of(3), posVelIntegrator.tail().x());
+    return MatrixFunctions.getSE3(IdentityMatrix.of(3), posVelIntegrator.tail().state());
   }
 
   public void setGoal(Tensor src) {
-    Tensor pos = posVelIntegrator.tail().x().extract(0, 3);
+    Tensor pos = posVelIntegrator.tail().state().extract(0, 3);
     Tensor dir = src.extract(0, 3).subtract(pos);
     addPush(dir);
   }

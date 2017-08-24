@@ -78,8 +78,8 @@ public class EjCar implements Animated, SE3Interface {
   public void integrate(Scalar now) {
     pushIntegrator.move(u, now);
     int tires = vehicleModel.wheels();
-    Tensor omega = carIntegrator.tail().x().extract(6, 6 + tires);
-    carIntegrator.move(pushIntegrator.tail().x(), now);
+    Tensor omega = carIntegrator.tail().state().extract(6, 6 + tires);
+    carIntegrator.move(pushIntegrator.tail().state(), now);
     tireIntegrator.move(omega, now);
   }
 
@@ -98,15 +98,15 @@ public class EjCar implements Animated, SE3Interface {
   }
 
   public CarControl getCarControl() {
-    return vehicleModel.createControl(pushIntegrator.tail().x());
+    return vehicleModel.createControl(pushIntegrator.tail().state());
   }
 
   public CarState getCarState() {
-    return new CarState(carIntegrator.tail().x());
+    return new CarState(carIntegrator.tail().state());
   }
 
   public Tensor getTireAngle() {
-    return tireIntegrator.tail().x();
+    return tireIntegrator.tail().state();
   }
 
   @Override

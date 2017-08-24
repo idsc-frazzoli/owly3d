@@ -17,8 +17,8 @@ public class Rice2MoverDrawable extends Rice2Mover implements Drawable {
     StateTime stateTime = getStateTime();
     GL11.glPushMatrix();
     GL11.glTranslated( //
-        stateTime.x().Get(0).number().doubleValue(), //
-        stateTime.x().Get(1).number().doubleValue(), //
+        stateTime.state().Get(0).number().doubleValue(), //
+        stateTime.state().Get(1).number().doubleValue(), //
         0);
     GL11.glBegin(GL11.GL_QUADS);
     GL11.glColor4f(.7f, .5f, .7f, .5f);

@@ -47,7 +47,7 @@ public class TrajectoryRender3d {
           GL11.glBegin(GL11.GL_LINE_STRIP);
           GL11.glColor3f(0, 1, 0);
           for (StateTime stateTime : LIST) {
-            Render3dUtils.vertex(stateTime.x());
+            Render3dUtils.vertex(stateTime.state());
           }
           GL11.glEnd();
           // Path2D path2d = owlyLayer.toPath2D(LIST);

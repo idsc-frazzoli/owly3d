@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import ch.ethz.idsc.owly.data.TimeKeeper;
 import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.ani.obj.EjCar;
@@ -34,7 +35,6 @@ import ch.ethz.idsc.owly3d.demo.DemoTriangle1;
 import ch.ethz.idsc.owly3d.demo.DemoTriangle2;
 import ch.ethz.idsc.owly3d.demo.Example2_17;
 import ch.ethz.idsc.owly3d.demo.LaserPointCloud;
-import ch.ethz.idsc.owly3d.sim.TimeKeeper;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.Primitives2;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
@@ -45,10 +45,6 @@ import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
 import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
 import ch.ethz.idsc.owly3d.util.usr.MouseControl;
 import ch.ethz.idsc.owly3d.util.usr.MouseHandler;
-import ch.ethz.idsc.retina.dev.hdl32e.Hdl32eFiringProvider;
-import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionCollector;
-import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionListener;
-import ch.ethz.idsc.retina.dev.hdl32e.LiveHdl32eFiringProvider;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -139,13 +135,26 @@ public class Owly3d {
     laserPointCloud = new LaserPointCloud();
     // LaserPcalPlayback laserPcalPlayback = new LaserPcalPlayback(laserPositionConsumer);
     // laserPcalPlayback.thread.start();
-    Hdl32eFiringProvider liveLaser = //
-        new LiveHdl32eFiringProvider(new Hdl32ePositionCollector(hdl32ePositionListener));
+    // Hdl32eFiringPacketConsumer consumer = new Hdl32eFiringPacketConsumer();
+    // Hdl32eBoundedFiringCollector collector = new Hdl32eBoundedFiringCollector(hdl32ePositionListener);
+    // Hdl32eAngularFiringCollector collector = new Hdl32eAngularFiringCollector(hdl32ePositionListener);
+    // consumer.addListener(collector);
+    // consumer.addListener(new Hdl32eRealtimeFiringPacket(1));
+    // StartAndStoppable liveLaser = new Hdl32eLiveFiringProvider(consumer);
+    // PcapPacketConsumer packetConsumer = new Hdl32ePacketConsumer(consumer, null);
+    // new Thread(() -> {
+    // try {
+    // PcapParse.of(Pcap.HIGHWAY.file, packetConsumer);
+    // } catch (Exception e1) {
+    // // TODO Auto-generated catch block
+    // e1.printStackTrace();
+    // } // blocking
+    // }).start();
     // new PcalHdl32ePositionProvider(hdl32ePositionListener, //
     // new File( //
     // "/media/datahaki/media/ethz/sensors/velodyne01/usb/Velodyne/HDL-32E Sample Data", //
     // "HDL32-V2_R into Butterfield into Digital Drive.pcap"));
-    liveLaser.start();
+    // liveLaser.start();
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
@@ -187,7 +196,7 @@ public class Owly3d {
           Tensor tensor = keyboardControl.getPushAWSD();
           ejCar.addControl( //
               tensor.Get(1), //
-              Clip.UNIT.apply(tensor.Get(0).negate()), // brake
+              Clip.unit().apply(tensor.Get(0).negate()), // brake
               keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
               keyboardControl.pressed(GLFW.GLFW_KEY_W), //
               keyboardControl.pressed(GLFW.GLFW_KEY_Q));
@@ -195,17 +204,17 @@ public class Owly3d {
         {
           // JoystickControl.printAxes();
           Tensor axes = JoystickControl.getAxes();
-          Scalar mono = Clip.UNIT.apply(axes.Get(1).negate());
+          Scalar mono = Clip.unit().apply(axes.Get(1).negate());
           // TODO based on joystick
           // ejCar.addControl( //
           // axes.Get(0).negate(), // delta
-          // Clip.UNIT.apply(axes.Get(1)), // brake
-          // Clip.UNIT.apply(axes.Get(2)), // handbrake
+          // Clip.unit().apply(axes.Get(1)), // brake
+          // Clip.unit().apply(axes.Get(2)), // handbrake
           // mono, mono); // throttle
-          if (false) // FIXME
+          if (true) // FIXME
             ejCar.addControl( //
                 axes.Get(0).negate(), // delta
-                Clip.UNIT.apply(axes.Get(1)), // brake
+                Clip.unit().apply(axes.Get(1)), // brake
                 RealScalar.ZERO, // handbrake
                 unit_one(axes.Get(2)), //
                 unit_one(axes.Get(5))); // throttle
@@ -304,20 +313,20 @@ public class Owly3d {
       if (keyboardHander.hit(GLFW.GLFW_KEY_ESCAPE))
         GLFW.glfwSetWindowShouldClose(windowObject.window, true); // We will detect this in the rendering loop
     }
-    liveLaser.stop();
+    // liveLaser.stop();
   }
 
-  Hdl32ePositionListener hdl32ePositionListener = new Hdl32ePositionListener() {
-    @Override
-    public void digest(float[] position_data, int length) {
-      try {
-        laserPointCloud.fill(position_data, length);
-        Thread.sleep(200); // 5 Hz
-      } catch (Exception exception) {
-        exception.printStackTrace();
-      }
-    }
-  };
+  // Hdl32eFiringListener hdl32ePositionListener = new Hdl32eFiringListener() {
+  // @Override
+  // public void digest(float[] position_data, int length) {
+  // try {
+  // laserPointCloud.fill(position_data, length);
+  // Thread.sleep(200); // 5 Hz
+  // } catch (Exception exception) {
+  // exception.printStackTrace();
+  // }
+  // }
+  // };
   private int cubemapProgram;
   private int cubemap_invViewProjUniform;
 
