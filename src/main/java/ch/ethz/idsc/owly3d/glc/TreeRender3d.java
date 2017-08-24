@@ -8,9 +8,9 @@ import java.util.DoubleSummaryStatistics;
 import org.lwjgl.opengl.GL11;
 
 import ch.ethz.idsc.owly.data.tree.StateCostNode;
-import ch.ethz.idsc.owly.gui.Hue;
 import ch.ethz.idsc.owly3d.util.Render3dUtils;
 import ch.ethz.idsc.tensor.Scalar;
+import ch.ethz.idsc.tensor.img.Hue;
 
 public class TreeRender3d {
   private final Collection<? extends StateCostNode> collection;
@@ -38,7 +38,7 @@ public class TreeRender3d {
       if (parent != null) {
         double val = node.costFromRoot().number().doubleValue();
         final double interp = (val - min) / (max - min);
-        Color color = new Hue(interp, 1, 1, .2).rgba;
+        Color color = Hue.of(interp, 1, 1, .2);
         GL11.glColor4f(color.getRed() / 255.f, color.getGreen() / 255.f, color.getBlue() / 255.f, color.getAlpha() / 255.f);
         Render3dUtils.vertex(node.state());
         Render3dUtils.vertex(parent.state());

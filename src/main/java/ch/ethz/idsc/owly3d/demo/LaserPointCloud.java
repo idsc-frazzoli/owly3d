@@ -7,19 +7,20 @@ import java.nio.IntBuffer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.retina.dev.hdl32e.Hdl32ePositionCollector;
-
+//import ch.ethz.idsc.retina.dev.hdl32e.data.Hdl32eAngularFiringCollector;
 /** draws a single triangle using GL11.glDrawArrays */
 public class LaserPointCloud {
-  public static final int LENGTH = Hdl32ePositionCollector.POINT_NUMEL;
+  // FIXME
+  public static final int LENGTH = 123;// Hdl32eAngularFiringCollector.MAX_COORDINATES;
   // ---
-  private FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(3 * LENGTH);
-  private final IntBuffer intBuffer = BufferUtils.createIntBuffer(LENGTH);
+  private final FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(4 * LENGTH);
+  private final IntBuffer intBuffer = BufferUtils.createIntBuffer(3 * LENGTH);
 
   public LaserPointCloud() {
     for (int index = 0; index < LENGTH; ++index)
       intBuffer.put(index);
     intBuffer.flip();
+    System.out.println(floatBuffer.capacity());
   }
 
   public synchronized void draw() {
@@ -33,8 +34,19 @@ public class LaserPointCloud {
   }
 
   public synchronized void fill(float[] position_data, int length) {
-    for (int index = 0; index < length; ++index)
-      floatBuffer.put(position_data[index]);
+    // System.out.println(LENGTH + " " + length);
+    floatBuffer.position(0);
+    int index = 0;
+    try {
+      for (; index < Math.min(length, 3 * LENGTH); ++index) {
+        // System.out.println(index);
+        floatBuffer.put(position_data[index]);
+      }
+    } catch (Exception exception) {
+      // ---
+      // FIXME doesn't always draw everything
+      // System.out.println(index);
+    }
     floatBuffer.flip();
   }
 }

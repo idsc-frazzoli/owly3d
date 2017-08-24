@@ -154,6 +154,14 @@
 			</snapshots>
 		</repository>
 		<repository>
+			<id>lcm-java-mvn-repo</id>
+			<url>https://raw.github.com/idsc-frazzoli/lcm-java/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+		<repository>
 			<id>owly-mvn-repo</id>
 			<url>https://raw.github.com/idsc-frazzoli/owly/mvn-repo/</url>
 			<snapshots>
@@ -167,18 +175,25 @@
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
 			<artifactId>tensor</artifactId>
-			<version>0.3.1</version>
+			<version>0.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.ethz.idsc</groupId>
+			<artifactId>lcm-java</artifactId>
+			<version>0.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
 			<artifactId>owly</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.3</version>
 		</dependency>
+		<!-- 
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
 			<artifactId>retina</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+ -->
 		<!-- LWJGL -->
 		<dependency>
 			<groupId>org.joml</groupId>

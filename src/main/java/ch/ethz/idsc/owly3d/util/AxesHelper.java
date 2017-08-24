@@ -3,7 +3,7 @@ package ch.ethz.idsc.owly3d.util;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.retina.util.math.SimplexNoise;
+import ch.ethz.idsc.owly.math.noise.SimplexContinuousNoise;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -55,8 +55,8 @@ public enum AxesHelper {
         Scalar ey = mod.apply(RealScalar.of(y / 2));
         if ((ex.equals(RealScalar.ZERO) && ey.equals(RealScalar.ONE)) || //
             (ex.equals(RealScalar.ONE) && ey.equals(RealScalar.ZERO))) {
-          double rr = SimplexNoise.at(x * .2 + 10, y * .2 - 10);
-          double rb = SimplexNoise.at(x * .2, y * .2);
+          double rr = SimplexContinuousNoise.FUNCTION.at(x * .2 + 10, y * .2 - 10);
+          double rb = SimplexContinuousNoise.FUNCTION.at(x * .2, y * .2);
           GL11.glColor4d(.2 * (rr + 1), .5, .2 * (1 + rb), .2);
           GL11.glVertex3f(x, y, -.1f);
           GL11.glVertex3f(x + 2, y, -.1f);
