@@ -20,7 +20,7 @@ public enum JoystickControl {
     for (int i = GLFW.GLFW_JOYSTICK_1; i < GLFW.GLFW_JOYSTICK_10; ++i) {
       String string = GLFW.glfwGetJoystickName(i);
       if (string != null)
-        System.out.println(string);
+        System.out.println(i + " " + string);
     }
   }
 
@@ -42,8 +42,7 @@ public enum JoystickControl {
    * [5] -1 for as-is, +1 for all inward
    * 
    * @return vector with axes as available and with values as-is */
-  public static Tensor getAxes() {
-    int joystick = GLFW.GLFW_JOYSTICK_1;
+  public static Tensor getAxes(int joystick) {
     FloatBuffer floatBuffer = GLFW.glfwGetJoystickAxes(joystick);
     Tensor tensor = Array.zeros(12);
     if (floatBuffer != null) {
@@ -53,6 +52,10 @@ public enum JoystickControl {
         tensor.set(RealScalar.of(floatBuffer.get(index)), index);
     }
     return tensor;
+  }
+
+  public static Tensor getAxes() {
+    return getAxes(GLFW.GLFW_JOYSTICK_1);
   }
 
   /** @return vector with axes as available and with values as-is */
