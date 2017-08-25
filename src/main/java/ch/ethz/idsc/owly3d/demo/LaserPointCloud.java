@@ -19,14 +19,21 @@ public class LaserPointCloud {
     for (int index = 0; index < LENGTH; ++index)
       intBuffer.put(index);
     intBuffer.flip();
+    // ---
+    // start with empty buffer
+    floatBuffer.position(0);
+    floatBuffer.limit(0);
+    // ---
+    intBuffer.limit(0);
   }
 
   public synchronized void fill(FloatBuffer position_data, ByteBuffer byteBuffer) {
-    floatBuffer.position(0);
     floatBuffer.limit(3 * LENGTH);
+    floatBuffer.position(0);
     floatBuffer.put(position_data);
     floatBuffer.flip();
-    intBuffer.position(0);
+    // ---
+    intBuffer.position(0); // TODO probably unnecessary
     intBuffer.limit(byteBuffer.limit());
   }
 

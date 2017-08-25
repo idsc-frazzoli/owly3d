@@ -2,11 +2,15 @@
 
 <a href="https://travis-ci.org/idsc-frazzoli/owly3d"><img src="https://travis-ci.org/idsc-frazzoli/owly3d.svg?branch=master" alt="Build Status"></a>
 
-Visualizations of state space model dynamics and motion planning.
+Visualizations of 
+* state space model dynamics and motion planning.
+* sensor data (live or replay)
 
 ## Examples
 
 [user control of Edo's car model](https://www.youtube.com/watch?v=X6bA33LzfKc)
+
+[user control of go kart model](https://www.youtube.com/watch?v=mCbPydpywOw)
 
 ## Tests
 
