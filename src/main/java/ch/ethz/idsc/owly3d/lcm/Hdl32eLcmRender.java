@@ -4,29 +4,27 @@ package ch.ethz.idsc.owly3d.lcm;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
-import ch.ethz.idsc.owly3d.demo.LaserPointCloud;
-import ch.ethz.idsc.retina.dev.hdl32e.Hdl32eRayBlockListener;
-import ch.ethz.idsc.retina.dev.hdl32e.data.Hdl32eAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.hdl32e.data.Hdl32eRotationProvider;
-import ch.ethz.idsc.retina.dev.hdl32e.data.Hdl32eSpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.Hdl32eLcmClient;
+import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
+import ch.ethz.idsc.retina.dev.velodyne.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.dev.velodyne.LidarRayBlockListener;
+import ch.ethz.idsc.retina.dev.velodyne.LidarRotationProvider;
+import ch.ethz.idsc.retina.dev.velodyne.hdl32e.Hdl32eRayDecoder;
+import ch.ethz.idsc.retina.dev.velodyne.hdl32e.data.Hdl32eSpacialProvider;
+import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
 
-public class Hdl32eLcmRender implements Hdl32eRayBlockListener {
-  private final LaserPointCloud laserPointCloud;
+public class Hdl32eLcmRender implements LidarRayBlockListener {
+  private final LidarPointCloud laserPointCloud;
 
   public Hdl32eLcmRender(String lidarId) {
-    laserPointCloud = new LaserPointCloud();
-    Hdl32eLcmClient client = new Hdl32eLcmClient(lidarId);
-    FloatBuffer floatBuffer = FloatBuffer.wrap(new float[2310 * 32 * 3]);
-    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[2310 * 32]);
-    Hdl32eAngularFiringCollector hdl32eAngularFiringCollector = //
-        new Hdl32eAngularFiringCollector(floatBuffer, byteBuffer);
+    laserPointCloud = new LidarPointCloud();
+    VelodyneLcmClient client = VelodyneLcmClient.hdl32e(lidarId);
+    LidarAngularFiringCollector hdl32eAngularFiringCollector = LidarAngularFiringCollector.createDefault();
     Hdl32eSpacialProvider hdl32eSpacialProvider = new Hdl32eSpacialProvider();
     hdl32eSpacialProvider.addListener(hdl32eAngularFiringCollector);
-    Hdl32eRotationProvider hdl32eRotationProvider = new Hdl32eRotationProvider();
+    LidarRotationProvider hdl32eRotationProvider = new LidarRotationProvider();
     hdl32eRotationProvider.addListener(hdl32eAngularFiringCollector);
-    client.hdl32eRayDecoder.addListener(hdl32eSpacialProvider);
-    client.hdl32eRayDecoder.addListener(hdl32eRotationProvider);
+    ((Hdl32eRayDecoder) client.rayDecoder).addListener(hdl32eSpacialProvider);
+    ((Hdl32eRayDecoder) client.rayDecoder).addListener(hdl32eRotationProvider);
     hdl32eAngularFiringCollector.addListener(this);
     client.startSubscriptions();
   }

@@ -9,13 +9,13 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
 /** draws a single triangle using GL11.glDrawArrays */
-public class LaserPointCloud {
-  public static final int LENGTH = 2304 * 32;
+public class LidarPointCloud {
+  public static final int LENGTH = 2304 * 32; // TODO magic const
   // ---
-  private final FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(3 * LENGTH);
+  private final FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(LENGTH * 3); // 3 for {x, y, z}
   private final IntBuffer intBuffer = BufferUtils.createIntBuffer(LENGTH);
 
-  public LaserPointCloud() {
+  public LidarPointCloud() {
     for (int index = 0; index < LENGTH; ++index)
       intBuffer.put(index);
     intBuffer.flip();

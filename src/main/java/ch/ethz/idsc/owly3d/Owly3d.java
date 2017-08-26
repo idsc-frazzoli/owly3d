@@ -35,6 +35,7 @@ import ch.ethz.idsc.owly3d.demo.DemoTriangle1;
 import ch.ethz.idsc.owly3d.demo.DemoTriangle2;
 import ch.ethz.idsc.owly3d.demo.Example2_17;
 import ch.ethz.idsc.owly3d.lcm.Hdl32eLcmRender;
+import ch.ethz.idsc.owly3d.lcm.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.Primitives2;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
@@ -131,6 +132,7 @@ public class Owly3d {
     example2_17.init();
     final DemoPointCloud demoPointCloud = new DemoPointCloud();
     Hdl32eLcmRender hdl32eLcmRender = new Hdl32eLcmRender("center");
+    Vlp16LcmRender vlp16LcmRender = new Vlp16LcmRender("center");
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
@@ -276,6 +278,7 @@ public class Owly3d {
         // example2_17.draw();
         // demoPointCloud.draw();
         hdl32eLcmRender.draw();
+        vlp16LcmRender.draw();
         // mesh.drawTest();
         // drawCubemap(); // TODO
       }
