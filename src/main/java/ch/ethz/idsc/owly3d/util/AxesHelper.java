@@ -44,6 +44,7 @@ public enum AxesHelper {
   public static void checker(Tensor pos) {
     GL11.glBegin(GL11.GL_QUADS);
     Tensor ras = Floor.of(pos.multiply(RealScalar.of(1 / 2.))).multiply(RealScalar.of(2));
+    // this throws an exception if gokart has wondered off very far
     int cx = Scalars.intValueExact(ras.Get(0));
     int cy = Scalars.intValueExact(ras.Get(1));
     // System.out.println(cx + " " + cy);

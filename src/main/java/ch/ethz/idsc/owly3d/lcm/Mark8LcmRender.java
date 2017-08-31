@@ -8,24 +8,26 @@ import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
 import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
 import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
 import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.hdl32e.Hdl32eSpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
+import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8Decoder;
+import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8SpacialProvider;
+import ch.ethz.idsc.retina.lcm.lidar.Mark8LcmClient;
 
-public class Hdl32eLcmRender implements LcmLidarRender {
+public class Mark8LcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;
 
-  public Hdl32eLcmRender(String lidarId) {
+  public Mark8LcmRender(String lidarId) {
     laserPointCloud = new LidarPointCloud();
-    VelodyneLcmClient velodyneLcmClient = VelodyneLcmClient.hdl32e(lidarId);
+    Mark8Decoder mark8Decoder = new Mark8Decoder();
+    Mark8LcmClient mark8LcmClient = new Mark8LcmClient(mark8Decoder, "center");
     LidarAngularFiringCollector lidarAngularFiringCollector = LidarAngularFiringCollector.createDefault();
-    LidarSpacialProvider lidarSpacialProvider = new Hdl32eSpacialProvider();
+    LidarSpacialProvider lidarSpacialProvider = new Mark8SpacialProvider();
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
-    LidarRotationProvider hdl32eRotationProvider = new LidarRotationProvider();
-    hdl32eRotationProvider.addListener(lidarAngularFiringCollector);
-    velodyneLcmClient.velodyneDecoder.addRayListener(lidarSpacialProvider);
-    velodyneLcmClient.velodyneDecoder.addRayListener(hdl32eRotationProvider);
+    LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
+    lidarRotationProvider.addListener(lidarAngularFiringCollector);
+    mark8Decoder.addRayListener(lidarSpacialProvider);
+    mark8Decoder.addRayListener(lidarRotationProvider);
     lidarAngularFiringCollector.addListener(this);
-    velodyneLcmClient.startSubscriptions();
+    mark8LcmClient.startSubscriptions();
   }
 
   @Override

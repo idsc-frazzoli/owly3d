@@ -5,24 +5,24 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
-import ch.ethz.idsc.retina.dev.velodyne.LidarAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.velodyne.LidarRayBlockListener;
-import ch.ethz.idsc.retina.dev.velodyne.LidarRotationProvider;
-import ch.ethz.idsc.retina.dev.velodyne.vlp16.Vlp16SpacialProvider;
+import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
+import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
+import ch.ethz.idsc.retina.dev.lidar.vlp16.Vlp16SpacialProvider;
 import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
 
-public class Vlp16LcmRender implements LidarRayBlockListener {
+public class Vlp16LcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;
 
   public Vlp16LcmRender(String lidarId) {
     laserPointCloud = new LidarPointCloud();
     VelodyneLcmClient velodyneLcmClient = VelodyneLcmClient.vlp16(lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = LidarAngularFiringCollector.createDefault();
-    Vlp16SpacialProvider vlp16SpacialProvider = new Vlp16SpacialProvider();
-    vlp16SpacialProvider.addListener(lidarAngularFiringCollector);
+    LidarSpacialProvider lidarSpacialProvider = new Vlp16SpacialProvider();
+    lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
     lidarRotationProvider.addListener(lidarAngularFiringCollector);
-    velodyneLcmClient.velodyneDecoder.addRayListener(vlp16SpacialProvider);
+    velodyneLcmClient.velodyneDecoder.addRayListener(lidarSpacialProvider);
     velodyneLcmClient.velodyneDecoder.addRayListener(lidarRotationProvider);
     lidarAngularFiringCollector.addListener(this);
     velodyneLcmClient.startSubscriptions();
@@ -33,6 +33,7 @@ public class Vlp16LcmRender implements LidarRayBlockListener {
     laserPointCloud.fill(floatBuffer, byteBuffer);
   }
 
+  @Override
   public void draw() {
     laserPointCloud.draw();
   }
