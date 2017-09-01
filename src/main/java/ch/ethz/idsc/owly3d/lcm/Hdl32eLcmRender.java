@@ -15,7 +15,7 @@ public class Hdl32eLcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;
 
   public Hdl32eLcmRender(String lidarId) {
-    laserPointCloud = new LidarPointCloud();
+    laserPointCloud = new LidarPointCloud(2304 * 32);
     VelodyneLcmClient velodyneLcmClient = VelodyneLcmClient.hdl32e(lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = LidarAngularFiringCollector.createDefault();
     LidarSpacialProvider lidarSpacialProvider = new Hdl32eSpacialProvider();

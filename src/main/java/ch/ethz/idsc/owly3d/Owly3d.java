@@ -9,12 +9,21 @@ import static org.lwjgl.opengl.GL11.glDrawArrays;
 import static org.lwjgl.opengl.GL11.glVertexPointer;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
@@ -39,17 +48,16 @@ import ch.ethz.idsc.owly3d.demo.Example2_17;
 import ch.ethz.idsc.owly3d.lcm.Hdl32eLcmRender;
 import ch.ethz.idsc.owly3d.lcm.LcmLidarRender;
 import ch.ethz.idsc.owly3d.lcm.Mark8LcmRender;
+import ch.ethz.idsc.owly3d.lcm.Urg04lxLcmRender;
 import ch.ethz.idsc.owly3d.lcm.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
+import ch.ethz.idsc.owly3d.util.IntervalTask;
 import ch.ethz.idsc.owly3d.util.Primitives2;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
 import ch.ethz.idsc.owly3d.util.gfx.Programs;
 import ch.ethz.idsc.owly3d.util.gfx.ShipProgram;
 import ch.ethz.idsc.owly3d.util.usr.JoystickControl;
-import ch.ethz.idsc.owly3d.util.usr.KeyboardControl;
-import ch.ethz.idsc.owly3d.util.usr.KeyboardHander;
-import ch.ethz.idsc.owly3d.util.usr.MouseControl;
-import ch.ethz.idsc.owly3d.util.usr.MouseHandler;
+import ch.ethz.idsc.retina.util.IntervalClock;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -59,37 +67,27 @@ import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.mat.Inverse;
 import ch.ethz.idsc.tensor.sca.Clip;
 
-public class Owly3d {
-  final boolean cameraOverEjcar = false;
+public class Owly3d extends Workspace {
+  // final boolean cameraOverEjcar = false;
   // ---
-  Window windowObject = new Window();
   Avatar avatar;
   Tracker tracker;
   Rice2Mover rice2Mover = new Rice2MoverDrawable(Tensors.vector(2, 2, -1, 1));
   Se2Car se2Car = new Se2CarDrawable(Tensors.vector(0, 3, 0), RealScalar.of(2));
   EjCar ejCar = new EjCarDrawable();
   Scenario scenario = new Scenario();
-  final KeyboardHander keyboardHander = new KeyboardHander();
-  KeyboardControl keyboardControl;
-  MouseControl mouseControl;
   TrajectoryPlanner trajectoryPlanner;
+  IntervalTask updateHz = new IntervalTask();
+  IntervalClock ic = new IntervalClock();
+  JLabel jLabel = new JLabel("test");
+  JCheckBox jCheckBox = new JCheckBox("camera on car");
 
-  private void init() {
-    MouseHandler mouseHandler = new MouseHandler();
-    GLFW.glfwSetKeyCallback(windowObject.window, keyboardHander);
-    GLFW.glfwSetMouseButtonCallback(windowObject.window, mouseHandler.button);
-    GLFW.glfwSetCursorPosCallback(windowObject.window, mouseHandler.position);
-    GLFW.glfwSetScrollCallback(windowObject.window, mouseHandler.scroll);
-    keyboardControl = new KeyboardControl(keyboardHander);
-    mouseControl = new MouseControl(mouseHandler);
-    // TODO p.28 search for equivalent to: glutInitDisplayMode(rgba, depth, double) ...?
+  public Owly3d() {
+    updateHz.setRepeated(1_000_000_000L);
   }
 
-  private static Scalar unit_one(Scalar convert) {
-    return convert.add(RealScalar.ONE).multiply(RealScalar.of(0.5));
-  }
-
-  private void loop() {
+  @Override
+  protected void loop() {
     // This line is critical for LWJGL's interoperation with GLFW's
     // OpenGL context, or any context that is managed externally.
     // LWJGL detects the context that is current in the current thread,
@@ -139,6 +137,7 @@ public class Owly3d {
     pointClouds.add(new Hdl32eLcmRender("center"));
     pointClouds.add(new Vlp16LcmRender("center"));
     pointClouds.add(new Mark8LcmRender("center"));
+    pointClouds.add(new Urg04lxLcmRender("front"));
     try {
       CubemapUtils.createCubemapTexture("cube/space/space_", true);
       createCubemapProgram();
@@ -219,7 +218,7 @@ public class Owly3d {
       );
       GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL); // confirmed
       // ---
-      if (true) {
+      if (false) {
         GL11.glMatrixMode(GL11.GL_MODELVIEW); // confirmed
         GL11.glLoadIdentity();
         GL11.glMatrixMode(GL11.GL_PROJECTION); // confirmed
@@ -239,7 +238,7 @@ public class Owly3d {
         GL11.glLoadIdentity();
         {
           Tensor mat = scenario.cameraMatrix();
-          if (cameraOverEjcar) {
+          if (jCheckBox.isSelected()) {
             Tensor car = ejCar.getSE3();
             mat.set(car.Get(0, 3), 0, 3);
             mat.set(car.Get(1, 3).add(RealScalar.of(-0)), 1, 3);
@@ -329,13 +328,34 @@ public class Owly3d {
     scenario.draw();
     // Texture.draw();
     scenario.resetControl();
+    double hz = ic.hertz();
+    if (updateHz.isReady())
+      jLabel.setText(String.format("%6.3f Hz", hz));
+  }
+
+  private static Scalar unit_one(Scalar convert) {
+    return convert.add(RealScalar.ONE).multiply(RealScalar.of(0.5));
   }
 
   public static void main(String[] args) {
+    JFrame jFrame = new JFrame();
+    jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    jFrame.setBounds(1700, 100, 250, 500);
+    Container container = jFrame.getContentPane();
+    container.setLayout(new BorderLayout());
     Owly3d owly3d = new Owly3d();
+    {
+      JPanel jPanel = new JPanel(new GridLayout(2, 1));
+      jPanel.add(owly3d.jLabel);
+      jPanel.add(owly3d.jCheckBox);
+      container.add(jPanel, BorderLayout.NORTH);
+    }
+    jFrame.setVisible(true);
     owly3d.windowObject.init();
     owly3d.init();
     owly3d.loop();
+    jFrame.setVisible(false);
+    jFrame.dispose();
     owly3d.windowObject.terminate();
   }
 }

@@ -1,6 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.demo;
 
+import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -10,13 +11,18 @@ import org.lwjgl.opengl.GL11;
 
 /** draws a single triangle using GL11.glDrawArrays */
 public class LidarPointCloud {
-  public static final int LENGTH = 2304 * 32; // TODO magic const
-  // ---
-  private final FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(LENGTH * 3); // 3 for {x, y, z}
-  private final IntBuffer intBuffer = BufferUtils.createIntBuffer(LENGTH);
+  private final int length_max;
+  private final FloatBuffer floatBuffer;
+  private final IntBuffer intBuffer;
+  public Color color = new Color(.8f, .8f, .9f, .7f);
 
-  public LidarPointCloud() {
-    for (int index = 0; index < LENGTH; ++index)
+  /** @param length_max for velodyne 2304 * 32 is sufficient */
+  public LidarPointCloud(int length_max) {
+    this.length_max = length_max;
+    floatBuffer = BufferUtils.createFloatBuffer(length_max * 3); // 3 for {x, y, z}
+    intBuffer = BufferUtils.createIntBuffer(length_max);
+    // ---
+    for (int index = 0; index < length_max; ++index)
       intBuffer.put(index);
     intBuffer.flip();
     // ---
@@ -28,10 +34,11 @@ public class LidarPointCloud {
   }
 
   public synchronized void fill(FloatBuffer position_data, ByteBuffer byteBuffer) {
-    floatBuffer.limit(3 * LENGTH);
+    floatBuffer.limit(3 * length_max);
     floatBuffer.position(0);
     floatBuffer.put(position_data);
     floatBuffer.flip();
+    // floatBuffer.remaining(); // TODO use to update point count
     // ---
     intBuffer.position(0); // TODO probably unnecessary
     intBuffer.limit(byteBuffer.limit());
@@ -39,11 +46,16 @@ public class LidarPointCloud {
 
   public synchronized void draw() {
     GL11.glPushMatrix();
-    GL11.glTranslated(0, 0, 3);
+    GL11.glTranslated(0, 0, 3); // TODO
     GL11.glPointSize(2);
+    // GL11.glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     GL11.glColor4d(.8, .8, .9, .7);
     GL11.glInterleavedArrays(GL11.GL_V3F, 0, floatBuffer);
     GL11.glDrawElements(GL11.GL_POINTS, intBuffer);
     GL11.glPopMatrix();
+  }
+
+  public int size() {
+    return 0; // TODO
   }
 }

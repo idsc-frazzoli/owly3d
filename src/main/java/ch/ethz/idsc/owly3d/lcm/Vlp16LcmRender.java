@@ -15,7 +15,7 @@ public class Vlp16LcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;
 
   public Vlp16LcmRender(String lidarId) {
-    laserPointCloud = new LidarPointCloud();
+    laserPointCloud = new LidarPointCloud(2304 * 32);
     VelodyneLcmClient velodyneLcmClient = VelodyneLcmClient.vlp16(lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = LidarAngularFiringCollector.createDefault();
     LidarSpacialProvider lidarSpacialProvider = new Vlp16SpacialProvider();
