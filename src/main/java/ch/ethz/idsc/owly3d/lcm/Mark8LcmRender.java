@@ -19,6 +19,7 @@ public class Mark8LcmRender implements LcmLidarRender {
 
   public Mark8LcmRender(String lidarId) {
     laserPointCloud = new LidarPointCloud(MAX_COORDINATES);
+    laserPointCloud.translate[2] = 1.2;
     Mark8Decoder mark8Decoder = new Mark8Decoder();
     Mark8LcmClient mark8LcmClient = new Mark8LcmClient(mark8Decoder, lidarId);
     FloatBuffer floatBuffer = FloatBuffer.wrap(new float[MAX_COORDINATES * 3]); // 3 because of x y z
@@ -43,5 +44,10 @@ public class Mark8LcmRender implements LcmLidarRender {
   @Override
   public void draw() {
     laserPointCloud.draw();
+  }
+
+  @Override
+  public int size() {
+    return laserPointCloud.size();
   }
 }

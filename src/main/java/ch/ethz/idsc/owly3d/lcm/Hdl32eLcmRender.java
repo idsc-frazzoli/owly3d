@@ -37,4 +37,9 @@ public class Hdl32eLcmRender implements LcmLidarRender {
   public void draw() {
     laserPointCloud.draw();
   }
+
+  @Override
+  public int size() {
+    return laserPointCloud.size();
+  }
 }

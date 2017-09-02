@@ -1,7 +1,6 @@
 // code by jph
 package ch.ethz.idsc.owly3d.demo;
 
-import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -14,7 +13,9 @@ public class LidarPointCloud {
   private final int length_max;
   private final FloatBuffer floatBuffer;
   private final IntBuffer intBuffer;
-  public Color color = new Color(.8f, .8f, .9f, .7f);
+  public float[] color = new float[] { 0.8f, 0.8f, 0.9f, 0.7f };
+  public double[] translate = new double[3];
+  int size = 0;
 
   /** @param length_max for velodyne 2304 * 32 is sufficient */
   public LidarPointCloud(int length_max) {
@@ -42,20 +43,20 @@ public class LidarPointCloud {
     // ---
     intBuffer.position(0); // TODO probably unnecessary
     intBuffer.limit(byteBuffer.limit());
+    size = byteBuffer.limit();
   }
 
   public synchronized void draw() {
     GL11.glPushMatrix();
-    GL11.glTranslated(0, 0, 3); // TODO
+    GL11.glTranslated(translate[0], translate[1], translate[2]);
     GL11.glPointSize(2);
-    // GL11.glColor4i(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-    GL11.glColor4d(.8, .8, .9, .7);
+    GL11.glColor4fv(color); // TODO deprecated
     GL11.glInterleavedArrays(GL11.GL_V3F, 0, floatBuffer);
     GL11.glDrawElements(GL11.GL_POINTS, intBuffer);
     GL11.glPopMatrix();
   }
 
   public int size() {
-    return 0; // TODO
+    return size;
   }
 }

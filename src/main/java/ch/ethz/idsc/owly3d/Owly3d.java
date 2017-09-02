@@ -23,6 +23,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
 import org.lwjgl.BufferUtils;
@@ -81,6 +82,8 @@ public class Owly3d extends Workspace {
   IntervalClock ic = new IntervalClock();
   JLabel jLabel = new JLabel("test");
   JCheckBox jCheckBox = new JCheckBox("camera on car");
+  JTextArea jTextArea = new JTextArea();
+  Bulletin bulletin = new Bulletin();
 
   public Owly3d() {
     updateHz.setRepeated(1_000_000_000L);
@@ -283,6 +286,9 @@ public class Owly3d extends Workspace {
         // example2_17.draw();
         // demoPointCloud.draw();
         pointClouds.forEach(LcmLidarRender::draw);
+        for (LcmLidarRender llr : pointClouds) {
+          bulletin.append("" + llr.size());
+        }
         // mesh.drawTest();
         // drawCubemap(); // TODO
       }
@@ -329,8 +335,11 @@ public class Owly3d extends Workspace {
     // Texture.draw();
     scenario.resetControl();
     double hz = ic.hertz();
-    if (updateHz.isReady())
+    if (updateHz.isReady()) {
       jLabel.setText(String.format("%6.3f Hz", hz));
+      jTextArea.setText(bulletin.toString());
+    }
+    bulletin.clear();
   }
 
   private static Scalar unit_one(Scalar convert) {
@@ -349,6 +358,9 @@ public class Owly3d extends Workspace {
       jPanel.add(owly3d.jLabel);
       jPanel.add(owly3d.jCheckBox);
       container.add(jPanel, BorderLayout.NORTH);
+    }
+    {
+      container.add(owly3d.jTextArea, BorderLayout.CENTER);
     }
     jFrame.setVisible(true);
     owly3d.windowObject.init();

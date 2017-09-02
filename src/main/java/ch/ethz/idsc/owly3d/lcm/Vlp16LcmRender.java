@@ -37,4 +37,9 @@ public class Vlp16LcmRender implements LcmLidarRender {
   public void draw() {
     laserPointCloud.draw();
   }
+
+  @Override
+  public int size() {
+    return laserPointCloud.size();
+  }
 }

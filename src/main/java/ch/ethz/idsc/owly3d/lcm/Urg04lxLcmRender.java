@@ -1,7 +1,6 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm;
 
-import java.awt.Color;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
@@ -20,7 +19,10 @@ public class Urg04lxLcmRender implements LcmLidarRender {
 
   public Urg04lxLcmRender(String lidarId) {
     laserPointCloud = new LidarPointCloud(MAX_COORDINATES);
-    laserPointCloud.color = Color.RED; // TODO doesn't work yet!
+    laserPointCloud.color[0] = 1f;
+    laserPointCloud.color[2] = 0;
+    laserPointCloud.translate[0] = 1.55;
+    laserPointCloud.translate[2] = 0.2; // 20 cm above gnd
     Urg04lxDecoder urg04lxDecoder = new Urg04lxDecoder();
     Urg04lxLcmClient urg04lxLcmClient = new Urg04lxLcmClient(urg04lxDecoder, lidarId);
     FloatBuffer floatBuffer = FloatBuffer.wrap(new float[MAX_COORDINATES * 3]); // 3 because of x y z
@@ -45,5 +47,10 @@ public class Urg04lxLcmRender implements LcmLidarRender {
   @Override
   public void draw() {
     laserPointCloud.draw();
+  }
+
+  @Override
+  public int size() {
+    return laserPointCloud.size();
   }
 }
