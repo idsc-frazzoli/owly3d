@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 
 import ch.ethz.idsc.owly3d.ani.Drawable;
 import ch.ethz.idsc.owly3d.util.PlanarHelper;
-import ch.ethz.idsc.owly3d.util.Primitives2;
+import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
@@ -25,7 +25,7 @@ public class Se2CarDrawable extends Se2Car implements Drawable {
   public void draw() {
     GL11.glPushMatrix();
     {
-      GL11.glMultMatrixd(Primitives2.matrix44(getSE3()));
+      GL11.glMultMatrixd(Primitives3d.matrix44(getSE3()));
       { // --- draw car body
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glColor4f(.2f, .7f, .5f, .8f);

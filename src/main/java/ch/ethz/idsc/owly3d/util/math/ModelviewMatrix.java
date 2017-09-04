@@ -3,7 +3,7 @@ package ch.ethz.idsc.owly3d.util.math;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly3d.util.Primitives2;
+import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -23,7 +23,7 @@ public enum ModelviewMatrix {
   public static void print() {
     double[] values = new double[16];
     GL11.glGetDoublev(GL11.GL_MODELVIEW_MATRIX, values);
-    Tensor matrix = Primitives2.matrix44(values);
+    Tensor matrix = Primitives3d.matrix44(values);
     System.out.println("GL_MODELVIEW_MATRIX=");
     System.out.println(Pretty.of(matrix));
   }

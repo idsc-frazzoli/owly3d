@@ -33,8 +33,8 @@ public class Urg04lxLcmRender implements LcmLidarRender {
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
     lidarRotationProvider.addListener(lidarAngularFiringCollector);
-    urg04lxDecoder.addListener(lidarSpacialProvider);
-    urg04lxDecoder.addListener(lidarRotationProvider);
+    urg04lxDecoder.addRayListener(lidarSpacialProvider);
+    urg04lxDecoder.addRayListener(lidarRotationProvider);
     lidarAngularFiringCollector.addListener(this);
     urg04lxLcmClient.startSubscriptions();
   }

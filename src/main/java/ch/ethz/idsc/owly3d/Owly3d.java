@@ -53,7 +53,7 @@ import ch.ethz.idsc.owly3d.lcm.Urg04lxLcmRender;
 import ch.ethz.idsc.owly3d.lcm.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.IntervalTask;
-import ch.ethz.idsc.owly3d.util.Primitives2;
+import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
 import ch.ethz.idsc.owly3d.util.gfx.Programs;
 import ch.ethz.idsc.owly3d.util.gfx.ShipProgram;
@@ -247,7 +247,7 @@ public class Owly3d extends Workspace {
             mat.set(car.Get(1, 3).add(RealScalar.of(-0)), 1, 3);
           }
           Tensor matrix = Inverse.of(mat);
-          GL11.glMultMatrixd(Primitives2.matrix44(matrix)); // confirmed
+          GL11.glMultMatrixd(Primitives3d.matrix44(matrix)); // confirmed
         }
       }
       {

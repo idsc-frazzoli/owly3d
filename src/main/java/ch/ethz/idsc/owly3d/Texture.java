@@ -5,7 +5,7 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly3d.util.Primitives2;
+import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.pdf.DiscreteUniformDistribution;
 import ch.ethz.idsc.tensor.pdf.RandomVariate;
@@ -21,7 +21,7 @@ public class Texture {
     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
     Tensor tensor = RandomVariate.of(DiscreteUniformDistribution.of(0, 256), 16 * 16 * 2);
-    ByteBuffer pixels = Primitives2.toByteBuffer(tensor);
+    ByteBuffer pixels = Primitives3d.toByteBuffer(tensor);
     GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, 16, 16, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, pixels);
     // GL11.gluBuild2DMipmaps(); //GL11.GL_TEXTURE_2D,fmt,tex.size[1],tex.size[2],fmt,GL_UNSIGNED_BYTE,tex.data);
     // GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);

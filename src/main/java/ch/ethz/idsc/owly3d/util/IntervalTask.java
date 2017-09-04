@@ -14,9 +14,10 @@ public class IntervalTask {
   public long from_clock;
   public long delay;
 
-  public void setRepeated(long period) {
+  /** @param nanoPeriod in nano seconds */
+  public void setRepeated(long nanoPeriod) {
     mode = Mode.REPEATED;
-    delay = period;
+    delay = nanoPeriod;
   }
 
   public boolean isReady() {
