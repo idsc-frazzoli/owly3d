@@ -1,6 +1,9 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owly.demo.drift.DriftExtStateSpaceModel;
+import ch.ethz.idsc.owly.demo.drift.DriftParameters;
+import ch.ethz.idsc.owly.demo.drift.DriftStates;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
@@ -10,13 +13,6 @@ import ch.ethz.idsc.owly.math.state.BoundedEpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.SimpleEpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.StateTime;
-import ch.ethz.idsc.owly.model.car.CarControl;
-import ch.ethz.idsc.owly.model.car.CarState;
-import ch.ethz.idsc.owly.model.car.CarStateSpaceModel;
-import ch.ethz.idsc.owly.model.car.CarStatic;
-import ch.ethz.idsc.owly.model.car.HomogenousTrack;
-import ch.ethz.idsc.owly.model.car.VehicleModel;
-import ch.ethz.idsc.owly.model.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
@@ -27,9 +23,9 @@ import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.lie.Rodriguez;
 
-public class EjCar implements Animated, SE3Interface {
-  private static final Tensor U_NULL = Array.zeros(5).unmodifiable();
-  private static final Tensor TIRE_N = Array.zeros(4).unmodifiable();
+public class DriftCar implements Animated, SE3Interface {
+  private static final Tensor U_NULL = Array.zeros(2).unmodifiable();
+  private static final Tensor TIRE_N = Array.zeros(2).unmodifiable();
   private static final Integrator INTEGRATOR = RungeKutta4Integrator.INSTANCE;
   private static final Scalar MAX_TIME_STEP = RealScalar.of(.005);
   // ---
@@ -39,34 +35,37 @@ public class EjCar implements Animated, SE3Interface {
       new StateTime(U_NULL, RealScalar.ZERO), //
       MAX_TIME_STEP);
   // absolute wheel angles, only used for display -> accuracy has low priority
+  @Deprecated
   private final EpisodeIntegrator tireIntegrator = new SimpleEpisodeIntegrator( //
       SingleIntegratorStateSpaceModel.INSTANCE, //
       EulerIntegrator.INSTANCE, //
       new StateTime(TIRE_N, RealScalar.ZERO));
-  final VehicleModel vehicleModel = //
-      RimoSinusIonModel.standard();
+  DriftParameters driftParameters = new DriftParameters();
+  // final VehicleModel vehicleModel = //
+  // RimoSinusIonModel.standard();
   // new CHatchbackModel(CarSteering.BOTH, RealScalar.of(.5));
   private EpisodeIntegrator carIntegrator;
   private Tensor u = U_NULL;
 
-  public EjCar() {
-    CarState carState = CarStatic.x0_demo1(); // magic const
+  public DriftCar() {
+    // CarState carState = CarStatic.x0_demo1(); // magic const
     // TODO redundant to reset() mod some const -> refactor
     carIntegrator = new BoundedEpisodeIntegrator( //
-        new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
+        new DriftExtStateSpaceModel(driftParameters), //
+        // new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
         INTEGRATOR, //
-        new StateTime(carState.asVector(), RealScalar.ZERO), //
+        new StateTime(DriftStates.x0_demo1(), RealScalar.ZERO), //
         MAX_TIME_STEP);
   }
 
   public void reset() {
     System.out.println("reset");
     Scalar now = carIntegrator.tail().time();
-    CarState carState = CarStatic.x0_demo1();
     carIntegrator = new BoundedEpisodeIntegrator( //
-        new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
+        // new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
+        new DriftExtStateSpaceModel(driftParameters), //
         INTEGRATOR, //
-        new StateTime(carState.asVector(), now), //
+        new StateTime(DriftStates.x0_demo1(), now), //
         MAX_TIME_STEP);
   }
 
@@ -78,10 +77,10 @@ public class EjCar implements Animated, SE3Interface {
   @Override
   public void integrate(Scalar now) {
     pushIntegrator.move(u, now);
-    int tires = vehicleModel.wheels();
-    Tensor omega = carIntegrator.tail().state().extract(6, 6 + tires); // TODO magic const
+    // int tires = 2;
+    // Tensor omega = carIntegrator.tail().state().extract(6, 6 + tires);
     carIntegrator.move(pushIntegrator.tail().state(), now);
-    tireIntegrator.move(omega, now);
+    // tireIntegrator.move(omega, now);
   }
 
   @Override
@@ -89,33 +88,29 @@ public class EjCar implements Animated, SE3Interface {
     u = U_NULL;
   }
 
-  public void addControl(Scalar delta, Scalar brake, Scalar handbrake, Scalar throttleL, Scalar throttleR) {
-    Tensor uv = Tensors.of( //
-        delta, //
-        brake.multiply(RealScalar.of(.5)), //
-        handbrake.multiply(RealScalar.of(.5)), //
-        throttleL, throttleR);
+  public void addControl(Scalar delta, Scalar throttleL) {
+    Tensor uv = Tensors.of(delta, throttleL);
     u = u.add(uv);
   }
 
-  public CarControl getCarControl() {
-    return vehicleModel.createControl(pushIntegrator.tail().state());
+  public Tensor getCarControl() {
+    return pushIntegrator.tail().state();
   }
 
-  public CarState getCarState() {
-    return new CarState(carIntegrator.tail().state());
+  /** @return (x,y,theta,beta,r,Ux) */
+  public Tensor getCarState() {
+    return carIntegrator.tail().state();
   }
 
-  public Tensor getTireAngle() {
-    return tireIntegrator.tail().state();
-  }
-
+  // public Tensor getTireAngle() {
+  // return tireIntegrator.tail().state();
+  // }
   @Override
   public Tensor getSE3() {
-    CarState carState = getCarState();
+    Tensor carState = getCarState();
     Tensor rotation = Rodriguez.of( //
-        Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Ksi));
+        Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Get(2)));
     return MatrixFunctions.getSE3( //
-        rotation, Tensors.of(carState.px, carState.py, RealScalar.ZERO));
+        rotation, Tensors.of(carState.Get(0), carState.Get(1), RealScalar.ZERO));
   }
 }

@@ -35,6 +35,8 @@ import org.lwjgl.opengl.GL20;
 import ch.ethz.idsc.owly.data.TimeKeeper;
 import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
+import ch.ethz.idsc.owly3d.ani.obj.DriftCar;
+import ch.ethz.idsc.owly3d.ani.obj.DriftCarDrawable;
 import ch.ethz.idsc.owly3d.ani.obj.EjCar;
 import ch.ethz.idsc.owly3d.ani.obj.EjCarDrawable;
 import ch.ethz.idsc.owly3d.ani.obj.Rice2Mover;
@@ -67,6 +69,7 @@ import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.mat.Inverse;
 import ch.ethz.idsc.tensor.sca.Clip;
+import ch.ethz.idsc.tensor.sca.Round;
 
 public class Owly3d extends Workspace {
   // final boolean cameraOverEjcar = false;
@@ -76,6 +79,7 @@ public class Owly3d extends Workspace {
   Rice2Mover rice2Mover = new Rice2MoverDrawable(Tensors.vector(2, 2, -1, 1));
   Se2Car se2Car = new Se2CarDrawable(Tensors.vector(0, 3, 0), RealScalar.of(2));
   EjCar ejCar = new EjCarDrawable();
+  DriftCar driftCar = new DriftCarDrawable();
   Scenario scenario = new Scenario();
   TrajectoryPlanner trajectoryPlanner;
   IntervalTask updateHz = new IntervalTask();
@@ -86,7 +90,7 @@ public class Owly3d extends Workspace {
   Bulletin bulletin = new Bulletin();
 
   public Owly3d() {
-    updateHz.setRepeated(1_000_000_000L);
+    updateHz.setRepeated(100_000_000L);
   }
 
   @Override
@@ -109,6 +113,7 @@ public class Owly3d extends Workspace {
     scenario.add(avatar);
     scenario.add(se2Car);
     scenario.add(ejCar);
+    scenario.add(driftCar);
     scenario.add(rice2Mover);
     tracker = new Tracker(Array.zeros(6));
     scenario.add(tracker);
@@ -159,10 +164,11 @@ public class Owly3d extends Workspace {
       { // controls
         if (keyboardHander.hit(GLFW.GLFW_KEY_R)) {
           ejCar.reset();
+          driftCar.reset();
         }
-        {
-          if (Scalars.nonZero(JoystickControl.getButtons().Get(0)))
-            ejCar.reset();
+        if (Scalars.nonZero(JoystickControl.getButtons().Get(0))) {
+          ejCar.reset();
+          driftCar.reset();
         }
         {
           avatar.addPush(keyboardControl.getPushKP());
@@ -186,6 +192,15 @@ public class Owly3d extends Workspace {
               keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
               keyboardControl.pressed(GLFW.GLFW_KEY_W), //
               keyboardControl.pressed(GLFW.GLFW_KEY_Q));
+          driftCar.addControl( //
+              tensor.Get(1), //
+              tensor.Get(0).multiply(RealScalar.of(500))
+          // Clip.unit().apply(tensor.Get(0).negate()), // brake
+          // keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
+          // keyboardControl.pressed(GLFW.GLFW_KEY_W).multiply(RealScalar.of(300)) //
+          // keyboardControl.pressed(GLFW.GLFW_KEY_Q)
+          );
+          driftCar.getCarState().stream().forEach(s -> bulletin.append("" + s.map(Round._4)));
         }
         {
           // JoystickControl.printAxes();
@@ -347,6 +362,7 @@ public class Owly3d extends Workspace {
   }
 
   public static void main(String[] args) {
+    // TODO extract to different file!
     JFrame jFrame = new JFrame();
     jFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
     jFrame.setBounds(1700, 100, 250, 500);
