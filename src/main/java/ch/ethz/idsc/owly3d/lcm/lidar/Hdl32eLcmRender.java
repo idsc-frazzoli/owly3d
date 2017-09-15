@@ -1,5 +1,5 @@
 // code by jph
-package ch.ethz.idsc.owly3d.lcm;
+package ch.ethz.idsc.owly3d.lcm.lidar;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

@@ -5,49 +5,82 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import idsc.BinaryBlob;
-import lcm.lcm.LCM;
+import ch.ethz.idsc.retina.dev.joystick.JoystickEncoder;
+import ch.ethz.idsc.retina.dev.joystick.JoystickType;
+import ch.ethz.idsc.retina.lcm.BinaryBlobPublisher;
+import ch.ethz.idsc.retina.util.StartAndStoppable;
 
-public class JoystickLcmServer {
-  private static String channel(String string) {
-    return "joystick." + string.replace(' ', '_').replaceAll("\\W", "").toLowerCase();
+public class JoystickLcmServer implements StartAndStoppable {
+  private static String formatName(String string) {
+    return string.replace(' ', '_').replaceAll("\\W", "").toLowerCase();
+  }
+
+  private final JoystickType joystickType;
+  private final int period;
+  private int joystick = -1;
+  private BinaryBlobPublisher publisher;
+  private Timer timer;
+
+  public JoystickLcmServer(JoystickType joystickType, int period) {
+    this.joystickType = joystickType;
+    this.period = period;
+    GLFWErrorCallback.createPrint(System.err).set();
+    // Initialize GLFW. Most GLFW functions will not work before doing this.
+    if (!GLFW.glfwInit())
+      throw new IllegalStateException("Unable to initialize GLFW");
+    for (int index = GLFW.GLFW_JOYSTICK_1; index < GLFW.GLFW_JOYSTICK_LAST; ++index) {
+      final String string = GLFW.glfwGetJoystickName(index);
+      if (Objects.nonNull(string)) {
+        final String generic = formatName(string);
+        if (generic.equalsIgnoreCase(joystickType.name())) {
+          System.out.println("found joystick " + joystickType);
+          joystick = index;
+          publisher = new BinaryBlobPublisher("joystick." + generic);
+          break;
+        }
+      }
+    }
+  }
+
+  @Override
+  public void start() {
+    stop();
+    timer = new Timer();
+    TimerTask timerTask = new TimerTask() {
+      private final byte[] data = new byte[joystickType.encodingSize()];
+
+      @Override
+      public void run() {
+        FloatBuffer axes = GLFW.glfwGetJoystickAxes(joystick);
+        ByteBuffer buttons = GLFW.glfwGetJoystickButtons(joystick);
+        ByteBuffer hats = GLFW.glfwGetJoystickHats(joystick);
+        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        JoystickEncoder.encode(joystickType, axes, buttons, hats, byteBuffer);
+        publisher.accept(data, byteBuffer.limit());
+      }
+    };
+    timer.schedule(timerTask, 100, period); // TODO magic const
+  }
+
+  @Override
+  public void stop() {
+    if (Objects.nonNull(timer)) {
+      timer.cancel();
+      timer = null;
+    }
   }
 
   public static void main(String[] args) {
-    try {
-      GLFWErrorCallback.createPrint(System.err).set();
-      // Initialize GLFW. Most GLFW functions will not work before doing this.
-      if (!GLFW.glfwInit())
-        throw new IllegalStateException("Unable to initialize GLFW");
-      int joystick = GLFW.GLFW_JOYSTICK_1;
-      final String string = GLFW.glfwGetJoystickName(joystick);
-      if (Objects.nonNull(string)) {
-        final String channel = channel(string);
-        System.out.println(channel);
-        FloatBuffer floatBuffer = GLFW.glfwGetJoystickAxes(joystick);
-        final int axes = floatBuffer.limit();
-        BinaryBlob binaryBlob = new BinaryBlob();
-        binaryBlob.data_length = 8 + 4 * axes;
-        binaryBlob.data = new byte[8 + 4 * axes];
-        while (true) {
-          ByteBuffer byteBuffer = ByteBuffer.wrap(binaryBlob.data);
-          byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-          byteBuffer.putLong(System.currentTimeMillis()); // append time
-          floatBuffer = GLFW.glfwGetJoystickAxes(joystick);
-          for (int count = 0; count < axes; ++count)
-            byteBuffer.putFloat(floatBuffer.get()); // append axis
-          LCM.getSingleton().publish(channel, binaryBlob);
-          Thread.sleep(50);
-        }
-      } else {
-        System.err.println("no joystick found");
-      }
-    } catch (Exception exception) {
-      exception.printStackTrace();
-    }
+    JoystickLcmServer joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, 100);
+    joystickLcmServer.start();
+    // System.out.println(GLFW.GLFW_JOYSTICK_1);
+    // System.out.println(GLFW.GLFW_JOYSTICK_LAST);
   }
 }
