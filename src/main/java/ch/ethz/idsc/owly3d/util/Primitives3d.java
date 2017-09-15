@@ -10,7 +10,8 @@ import ch.ethz.idsc.tensor.alg.Partition;
 import ch.ethz.idsc.tensor.alg.Transpose;
 import ch.ethz.idsc.tensor.io.Primitives;
 
-public enum Primitives2 {
+/** mappings between tensor and GL structures */
+public enum Primitives3d {
   ;
   // ---
   public static Tensor matrix44(double[] values) {
@@ -20,7 +21,10 @@ public enum Primitives2 {
   }
 
   public static double[] matrix44(Tensor matrix) {
-    return Primitives.toArrayDouble(Transpose.of(matrix));
+    double[] values = Primitives.toArrayDouble(Transpose.of(matrix));
+    if (values.length != 16)
+      throw new RuntimeException();
+    return values;
   }
 
   /** @param tensor
