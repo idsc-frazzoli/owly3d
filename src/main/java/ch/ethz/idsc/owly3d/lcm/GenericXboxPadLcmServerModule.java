@@ -7,7 +7,7 @@ import ch.ethz.idsc.retina.dev.joystick.JoystickType;
 import ch.ethz.idsc.retina.sys.AbstractModule;
 
 public class GenericXboxPadLcmServerModule extends AbstractModule {
-  public static final int PERIOD = 50;
+  public static final int PERIOD = 20;
   // ---
   private JoystickLcmServer joystickLcmServer;
 

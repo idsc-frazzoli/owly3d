@@ -8,10 +8,10 @@ import java.util.Objects;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import ch.ethz.idsc.retina.dev.joystick.AbstractJoystick;
 import ch.ethz.idsc.retina.dev.joystick.GenericXboxPadJoystick;
 import ch.ethz.idsc.retina.dev.joystick.JoystickDecoder;
 import ch.ethz.idsc.retina.dev.joystick.JoystickEncoder;
+import ch.ethz.idsc.retina.dev.joystick.JoystickEvent;
 import ch.ethz.idsc.retina.dev.joystick.JoystickType;
 
 public class JoystickInspector {
@@ -58,7 +58,7 @@ public class JoystickInspector {
             JoystickEncoder.encode(JoystickType.GENERIC_XBOX_PAD, axes, buttons, hats, dest);
             dest.flip();
             // System.out.println(dest.limit());
-            AbstractJoystick abstractJoystick = JoystickDecoder.decode(dest);
+            JoystickEvent abstractJoystick = JoystickDecoder.decode(dest);
             GenericXboxPadJoystick genericXboxPadJoystick = (GenericXboxPadJoystick) abstractJoystick;
             genericXboxPadJoystick.isButtonPressedA();
             {
@@ -72,7 +72,7 @@ public class JoystickInspector {
               System.out.println(val1 + " " + val2);
             }
             // System.out.println(genericXboxPadJoystick.isPressedAxisRight());
-            genericXboxPadJoystick.printAxes();
+            genericXboxPadJoystick.toInfoString();
             // set.add(genericXboxPadJoystick.getAxis0());
             // System.out.println(set.size());
             // System.out.println(dest.limit());
