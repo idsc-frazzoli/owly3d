@@ -78,7 +78,7 @@ public class JoystickLcmServer implements StartAndStoppable {
   }
 
   public static void main(String[] args) {
-    JoystickLcmServer joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, 100);
+    JoystickLcmServer joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, 30);
     joystickLcmServer.start();
     // System.out.println(GLFW.GLFW_JOYSTICK_1);
     // System.out.println(GLFW.GLFW_JOYSTICK_LAST);
