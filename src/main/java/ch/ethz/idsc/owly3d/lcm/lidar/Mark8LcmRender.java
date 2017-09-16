@@ -1,11 +1,9 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
 import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
 import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
 import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
 import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8Decoder;
@@ -13,7 +11,7 @@ import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8SpacialProvider;
 import ch.ethz.idsc.retina.lcm.lidar.Mark8LcmClient;
 
 public class Mark8LcmRender implements LcmLidarRender {
-  public static final int MAX_COORDINATES = 35000 * 32;
+  public static final int MAX_COORDINATES = 35000 * 32; // TODO very crude upper bound!
   // ---
   private final LidarPointCloud laserPointCloud;
 
@@ -22,10 +20,8 @@ public class Mark8LcmRender implements LcmLidarRender {
     laserPointCloud.translate[2] = 1.2;
     Mark8Decoder mark8Decoder = new Mark8Decoder();
     Mark8LcmClient mark8LcmClient = new Mark8LcmClient(mark8Decoder, lidarId);
-    FloatBuffer floatBuffer = FloatBuffer.wrap(new float[MAX_COORDINATES * 3]); // 3 because of x y z
-    ByteBuffer byteBuffer = ByteBuffer.wrap(new byte[MAX_COORDINATES]);
     LidarAngularFiringCollector lidarAngularFiringCollector = //
-        new LidarAngularFiringCollector(floatBuffer, byteBuffer);
+        new LidarAngularFiringCollector(MAX_COORDINATES, 3);
     LidarSpacialProvider lidarSpacialProvider = new Mark8SpacialProvider();
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
@@ -37,8 +33,8 @@ public class Mark8LcmRender implements LcmLidarRender {
   }
 
   @Override
-  public void digest(FloatBuffer floatBuffer, ByteBuffer byteBuffer) {
-    laserPointCloud.fill(floatBuffer, byteBuffer);
+  public void lidarRayBlock(LidarRayBlockEvent lidarRayBlockEvent) {
+    laserPointCloud.fill(lidarRayBlockEvent.floatBuffer, lidarRayBlockEvent.byteBuffer);
   }
 
   @Override

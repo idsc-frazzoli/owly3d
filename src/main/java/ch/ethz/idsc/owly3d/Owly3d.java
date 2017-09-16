@@ -90,7 +90,7 @@ public class Owly3d extends Workspace {
   Bulletin bulletin = new Bulletin();
 
   public Owly3d() {
-    updateHz.setRepeated(100_000_000L);
+    updateHz.setRepeated(200_000_000L);
   }
 
   @Override

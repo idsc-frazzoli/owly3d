@@ -6,6 +6,7 @@ import java.nio.FloatBuffer;
 
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
 import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
 import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
 import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
 import ch.ethz.idsc.retina.dev.lidar.VelodyneDecoder;
@@ -18,11 +19,12 @@ public class Hdl32eLcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;
 
   public Hdl32eLcmRender(String lidarId) {
-    laserPointCloud = new LidarPointCloud(2304 * 32);
+    final int max_points = 2304 * 32;
+    laserPointCloud = new LidarPointCloud(max_points);
     VelodyneModel velodyneModel = VelodyneModel.HDL32E;
     VelodyneDecoder velodyneDecoder = new Hdl32eDecoder();
     VelodyneLcmClient velodyneLcmClient = new VelodyneLcmClient(velodyneModel, velodyneDecoder, lidarId);
-    LidarAngularFiringCollector lidarAngularFiringCollector = LidarAngularFiringCollector.createDefault();
+    LidarAngularFiringCollector lidarAngularFiringCollector = new LidarAngularFiringCollector(max_points, 3);
     LidarSpacialProvider lidarSpacialProvider = new Hdl32eSpacialProvider();
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider hdl32eRotationProvider = new LidarRotationProvider();
@@ -34,7 +36,9 @@ public class Hdl32eLcmRender implements LcmLidarRender {
   }
 
   @Override
-  public void digest(FloatBuffer floatBuffer, ByteBuffer byteBuffer) {
+  public void lidarRayBlock(LidarRayBlockEvent lidarRayBlockEvent) {
+    FloatBuffer floatBuffer = lidarRayBlockEvent.floatBuffer;
+    ByteBuffer byteBuffer = lidarRayBlockEvent.byteBuffer;
     laserPointCloud.fill(floatBuffer, byteBuffer);
   }
 
