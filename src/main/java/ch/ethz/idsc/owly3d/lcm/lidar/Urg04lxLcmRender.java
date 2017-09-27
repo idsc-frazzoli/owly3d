@@ -6,7 +6,6 @@ import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
 import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
 import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
 import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.urg04lx.Urg04lxDecoder;
 import ch.ethz.idsc.retina.dev.lidar.urg04lx.Urg04lxDevice;
 import ch.ethz.idsc.retina.dev.lidar.urg04lx.Urg04lxSpacialProvider;
 import ch.ethz.idsc.retina.lcm.lidar.Urg04lxLcmClient;
@@ -20,16 +19,15 @@ public class Urg04lxLcmRender implements LcmLidarRender {
     laserPointCloud.color[2] = 0;
     laserPointCloud.translate[0] = 1.55;
     laserPointCloud.translate[2] = 0.2; // 20 cm above gnd
-    Urg04lxDecoder urg04lxDecoder = new Urg04lxDecoder();
-    Urg04lxLcmClient urg04lxLcmClient = new Urg04lxLcmClient(urg04lxDecoder, lidarId);
+    Urg04lxLcmClient urg04lxLcmClient = new Urg04lxLcmClient(lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = //
         new LidarAngularFiringCollector(Urg04lxDevice.MAX_POINTS, 3);
     LidarSpacialProvider lidarSpacialProvider = new Urg04lxSpacialProvider(3);
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
     lidarRotationProvider.addListener(lidarAngularFiringCollector);
-    urg04lxDecoder.addRayListener(lidarSpacialProvider);
-    urg04lxDecoder.addRayListener(lidarRotationProvider);
+    urg04lxLcmClient.urg04lxDecoder.addRayListener(lidarSpacialProvider);
+    urg04lxLcmClient.urg04lxDecoder.addRayListener(lidarRotationProvider);
     lidarAngularFiringCollector.addListener(this);
     urg04lxLcmClient.startSubscriptions();
   }

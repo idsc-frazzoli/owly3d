@@ -7,13 +7,14 @@ import ch.ethz.idsc.retina.dev.joystick.JoystickType;
 import ch.ethz.idsc.retina.sys.AbstractModule;
 
 public class GenericXboxPadLcmServerModule extends AbstractModule {
-  public static final int PERIOD = 20;
+  /** refresh period in [ms] for joystick events */
+  public static final int PERIOD_MS = 20;
   // ---
   private JoystickLcmServer joystickLcmServer;
 
   @Override
   protected void first() throws Exception {
-    joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, PERIOD);
+    joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, PERIOD_MS);
     joystickLcmServer.start();
   }
 

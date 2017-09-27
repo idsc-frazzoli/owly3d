@@ -17,7 +17,11 @@ public class LidarPointCloud {
   public double[] translate = new double[3];
   int size = 0;
 
-  /** @param length_max for velodyne 2304 * 32 is sufficient */
+  /** Examples for upper bounds:
+   * for velodyne 2304 * 32 is sufficient
+   * for mark8 in single sample mode
+   * 
+   * @param length_max */
   public LidarPointCloud(int length_max) {
     this.length_max = length_max;
     floatBuffer = BufferUtils.createFloatBuffer(length_max * 3); // 3 for {x, y, z}
@@ -56,6 +60,7 @@ public class LidarPointCloud {
     GL11.glPopMatrix();
   }
 
+  /** @return number of points in 2d or 3d */
   public int size() {
     return size;
   }

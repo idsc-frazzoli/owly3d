@@ -21,6 +21,7 @@ public class JoystickLcmServer implements StartAndStoppable {
     return string.replace(' ', '_').replaceAll("\\W", "").toLowerCase();
   }
 
+  // ---
   private final JoystickType joystickType;
   private final int period;
   private int joystick = -1;
@@ -66,7 +67,7 @@ public class JoystickLcmServer implements StartAndStoppable {
         publisher.accept(data, byteBuffer.limit());
       }
     };
-    timer.schedule(timerTask, 100, period); // TODO magic const
+    timer.schedule(timerTask, 100, period);
   }
 
   @Override
@@ -75,12 +76,5 @@ public class JoystickLcmServer implements StartAndStoppable {
       timer.cancel();
       timer = null;
     }
-  }
-
-  public static void main(String[] args) {
-    JoystickLcmServer joystickLcmServer = new JoystickLcmServer(JoystickType.GENERIC_XBOX_PAD, 30);
-    joystickLcmServer.start();
-    // System.out.println(GLFW.GLFW_JOYSTICK_1);
-    // System.out.println(GLFW.GLFW_JOYSTICK_LAST);
   }
 }

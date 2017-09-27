@@ -11,13 +11,15 @@ import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8SpacialProvider;
 import ch.ethz.idsc.retina.lcm.lidar.Mark8LcmClient;
 
 public class Mark8LcmRender implements LcmLidarRender {
-  public static final int MAX_COORDINATES = 35000 * 32; // TODO very crude upper bound!
+  /** in the workshop, the lidar produces 37000 points per revolution
+   * the value here is a crude upper bound */
+  public static final int MAX_COORDINATES = 5500 * 8;
   // ---
   private final LidarPointCloud laserPointCloud;
 
   public Mark8LcmRender(String lidarId) {
     laserPointCloud = new LidarPointCloud(MAX_COORDINATES);
-    laserPointCloud.translate[2] = 1.2;
+    laserPointCloud.translate[2] = 1.2; // TODO magic const depend on gokart
     Mark8Decoder mark8Decoder = new Mark8Decoder();
     Mark8LcmClient mark8LcmClient = new Mark8LcmClient(mark8Decoder, lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = //

@@ -16,21 +16,21 @@ import ch.ethz.idsc.retina.dev.lidar.hdl32e.Hdl32eSpacialProvider;
 import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
 
 public class Hdl32eLcmRender implements LcmLidarRender {
+  private static final int MAX_POINTS = 2304 * 32;
   private final LidarPointCloud laserPointCloud;
 
   public Hdl32eLcmRender(String lidarId) {
-    final int max_points = 2304 * 32;
-    laserPointCloud = new LidarPointCloud(max_points);
+    laserPointCloud = new LidarPointCloud(MAX_POINTS);
     VelodyneModel velodyneModel = VelodyneModel.HDL32E;
     VelodyneDecoder velodyneDecoder = new Hdl32eDecoder();
     VelodyneLcmClient velodyneLcmClient = new VelodyneLcmClient(velodyneModel, velodyneDecoder, lidarId);
-    LidarAngularFiringCollector lidarAngularFiringCollector = new LidarAngularFiringCollector(max_points, 3);
+    LidarAngularFiringCollector lidarAngularFiringCollector = new LidarAngularFiringCollector(MAX_POINTS, 3);
     LidarSpacialProvider lidarSpacialProvider = new Hdl32eSpacialProvider();
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider hdl32eRotationProvider = new LidarRotationProvider();
     hdl32eRotationProvider.addListener(lidarAngularFiringCollector);
-    velodyneDecoder.addRayListener(lidarSpacialProvider);
-    velodyneDecoder.addRayListener(hdl32eRotationProvider);
+    velodyneDecoder.addRayListener(lidarSpacialProvider); // TODO check if this is the right ordering of adding listeners
+    velodyneDecoder.addRayListener(hdl32eRotationProvider); //
     lidarAngularFiringCollector.addListener(this);
     velodyneLcmClient.startSubscriptions();
   }
