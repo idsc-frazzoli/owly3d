@@ -3,9 +3,9 @@ package ch.ethz.idsc.owly3d.lcm;
 
 import ch.ethz.idsc.retina.dev.joystick.JoystickType;
 
-public class GenericXboxPadLcmServerModule extends AbstractJoystickLcmServerModule {
+public class LogitechGamepadLcmServerModule extends AbstractJoystickLcmServerModule {
   @Override
   public JoystickType getJoystickType() {
-    return JoystickType.GENERIC_XBOX_PAD;
+    return JoystickType.LOGITECH_GAMEPAD_F710;
   }
 }

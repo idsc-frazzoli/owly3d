@@ -47,6 +47,8 @@ public class JoystickLcmServer implements StartAndStoppable {
         }
       }
     }
+    if (Objects.isNull(publisher))
+      throw new RuntimeException("joystick not found: " + joystickType);
   }
 
   @Override

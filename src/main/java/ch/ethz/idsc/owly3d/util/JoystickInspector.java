@@ -8,7 +8,6 @@ import java.util.Objects;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import ch.ethz.idsc.retina.dev.joystick.GenericXboxPadJoystick;
 import ch.ethz.idsc.retina.dev.joystick.JoystickDecoder;
 import ch.ethz.idsc.retina.dev.joystick.JoystickEncoder;
 import ch.ethz.idsc.retina.dev.joystick.JoystickEvent;
@@ -28,6 +27,7 @@ public class JoystickInspector {
       int joystick = GLFW.GLFW_JOYSTICK_1;
       final String string = GLFW.glfwGetJoystickName(joystick);
       if (Objects.nonNull(string)) {
+        System.out.println("JOYSTICK:" + string.toUpperCase());
         final String channel = channel(string);
         System.out.println(channel);
         {
@@ -55,24 +55,25 @@ public class JoystickInspector {
             FloatBuffer axes = GLFW.glfwGetJoystickAxes(joystick);
             ByteBuffer buttons = GLFW.glfwGetJoystickButtons(joystick);
             ByteBuffer hats = GLFW.glfwGetJoystickHats(joystick);
-            JoystickEncoder.encode(JoystickType.GENERIC_XBOX_PAD, axes, buttons, hats, dest);
+            JoystickEncoder.encode(JoystickType.LOGITECH_GAMEPAD_F710, axes, buttons, hats, dest);
             dest.flip();
             // System.out.println(dest.limit());
-            JoystickEvent abstractJoystick = JoystickDecoder.decode(dest);
-            GenericXboxPadJoystick genericXboxPadJoystick = (GenericXboxPadJoystick) abstractJoystick;
-            genericXboxPadJoystick.isButtonPressedA();
-            {
-              double val1 = genericXboxPadJoystick.getLeftSliderUnitValue();
-              double val2 = genericXboxPadJoystick.getRightSliderUnitValue();
-              // System.out.println(val1 + " " + val2);
-            }
-            {
-              double val1 = genericXboxPadJoystick.getRightKnobDirectionRight();
-              double val2 = genericXboxPadJoystick.getRightKnobDirectionUp();
-              System.out.println(val1 + " " + val2);
-            }
-            // System.out.println(genericXboxPadJoystick.isPressedAxisRight());
-            genericXboxPadJoystick.toInfoString();
+            JoystickEvent joystickEvent = JoystickDecoder.decode(dest);
+            System.out.println(joystickEvent.toInfoString());
+            // LogitechLogitechCordlessRumblepad2 genericXboxPadJoystick = (LogitechLogitechCordlessRumblepad2) abstractJoystick;
+            // genericXboxPadJoystick.isButtonPressedA();
+            // {
+            // double val1 = genericXboxPadJoystick.getLeftSliderUnitValue();
+            // double val2 = genericXboxPadJoystick.getRightSliderUnitValue();
+            // // System.out.println(val1 + " " + val2);
+            // }
+            // {
+            // double val1 = genericXboxPadJoystick.getRightKnobDirectionRight();
+            // double val2 = genericXboxPadJoystick.getRightKnobDirectionUp();
+            // System.out.println(val1 + " " + val2);
+            // }
+            // // System.out.println(genericXboxPadJoystick.isPressedAxisRight());
+            // genericXboxPadJoystick.toInfoString();
             // set.add(genericXboxPadJoystick.getAxis0());
             // System.out.println(set.size());
             // System.out.println(dest.limit());

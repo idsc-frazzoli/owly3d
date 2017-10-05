@@ -23,6 +23,7 @@ enum RunTaskGui {
     modules.add(Urg04lxLcmServerModule.class);
     // ---
     modules.add(GenericXboxPadLcmServerModule.class);
+    modules.add(LogitechGamepadLcmServerModule.class);
     new TaskGui(modules);
   }
 }
