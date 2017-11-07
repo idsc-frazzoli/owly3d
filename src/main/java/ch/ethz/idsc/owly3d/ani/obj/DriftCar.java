@@ -1,9 +1,9 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
-import ch.ethz.idsc.owly.demo.drift.DriftExtStateSpaceModel;
-import ch.ethz.idsc.owly.demo.drift.DriftParameters;
-import ch.ethz.idsc.owly.demo.drift.DriftStates;
+import ch.ethz.idsc.owly.car.drift.DriftExtStateSpaceModel;
+import ch.ethz.idsc.owly.car.drift.DriftParameters;
+import ch.ethz.idsc.owly.car.drift.DriftStates;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
@@ -30,7 +30,7 @@ public class DriftCar implements Animated, SE3Interface {
   private static final Scalar MAX_TIME_STEP = RealScalar.of(.005);
   // ---
   private final EpisodeIntegrator pushIntegrator = new BoundedEpisodeIntegrator( //
-      new Rice1StateSpaceModel(RealScalar.of(15.5)), //
+      Rice1StateSpaceModel.of(RealScalar.of(3.0)), //
       EulerIntegrator.INSTANCE, //
       new StateTime(U_NULL, RealScalar.ZERO), //
       MAX_TIME_STEP);
@@ -108,7 +108,7 @@ public class DriftCar implements Animated, SE3Interface {
   @Override
   public Tensor getSE3() {
     Tensor carState = getCarState();
-    Tensor rotation = Rodriguez.of( //
+    Tensor rotation = Rodriguez.exp( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Get(2)));
     return MatrixFunctions.getSE3( //
         rotation, Tensors.of(carState.Get(0), carState.Get(1), RealScalar.ZERO));

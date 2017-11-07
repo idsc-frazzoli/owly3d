@@ -1,6 +1,13 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owly.car.core.VehicleModel;
+import ch.ethz.idsc.owly.car.model.CarControl;
+import ch.ethz.idsc.owly.car.model.CarState;
+import ch.ethz.idsc.owly.car.model.CarStateSpaceModel;
+import ch.ethz.idsc.owly.car.model.CarStatic;
+import ch.ethz.idsc.owly.car.model.HomogenousTrack;
+import ch.ethz.idsc.owly.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
@@ -10,13 +17,6 @@ import ch.ethz.idsc.owly.math.state.BoundedEpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.SimpleEpisodeIntegrator;
 import ch.ethz.idsc.owly.math.state.StateTime;
-import ch.ethz.idsc.owly.model.car.CarControl;
-import ch.ethz.idsc.owly.model.car.CarState;
-import ch.ethz.idsc.owly.model.car.CarStateSpaceModel;
-import ch.ethz.idsc.owly.model.car.CarStatic;
-import ch.ethz.idsc.owly.model.car.HomogenousTrack;
-import ch.ethz.idsc.owly.model.car.VehicleModel;
-import ch.ethz.idsc.owly.model.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
@@ -34,7 +34,7 @@ public class EjCar implements Animated, SE3Interface {
   private static final Scalar MAX_TIME_STEP = RealScalar.of(.005);
   // ---
   private final EpisodeIntegrator pushIntegrator = new BoundedEpisodeIntegrator( //
-      new Rice1StateSpaceModel(RealScalar.of(15.5)), //
+      Rice1StateSpaceModel.of(RealScalar.of(2.5)), // TODO check
       EulerIntegrator.INSTANCE, //
       new StateTime(U_NULL, RealScalar.ZERO), //
       MAX_TIME_STEP);
@@ -50,7 +50,7 @@ public class EjCar implements Animated, SE3Interface {
   private Tensor u = U_NULL;
 
   public EjCar() {
-    CarState carState = CarStatic.x0_demo1(); // magic const
+    CarState carState = CarStatic.x0_demo1(vehicleModel); // magic const
     // TODO redundant to reset() mod some const -> refactor
     carIntegrator = new BoundedEpisodeIntegrator( //
         new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
@@ -62,7 +62,7 @@ public class EjCar implements Animated, SE3Interface {
   public void reset() {
     System.out.println("reset");
     Scalar now = carIntegrator.tail().time();
-    CarState carState = CarStatic.x0_demo1();
+    CarState carState = CarStatic.x0_demo1(vehicleModel);
     carIntegrator = new BoundedEpisodeIntegrator( //
         new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
         INTEGRATOR, //
@@ -113,7 +113,7 @@ public class EjCar implements Animated, SE3Interface {
   @Override
   public Tensor getSE3() {
     CarState carState = getCarState();
-    Tensor rotation = Rodriguez.of( //
+    Tensor rotation = Rodriguez.exp( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Ksi));
     return MatrixFunctions.getSE3( //
         rotation, Tensors.of(carState.px, carState.py, RealScalar.ZERO));

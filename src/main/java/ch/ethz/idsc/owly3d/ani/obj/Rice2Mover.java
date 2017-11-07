@@ -21,7 +21,7 @@ public class Rice2Mover implements Animated {
   /** @param state {px, py, vx, vy} */
   public Rice2Mover(Tensor state) {
     episodeIntegrator = new SimpleEpisodeIntegrator( //
-        new Rice2StateSpaceModel(RealScalar.of(2.0)), EulerIntegrator.INSTANCE, new StateTime(state, RealScalar.ZERO));
+        Rice2StateSpaceModel.of(RealScalar.of(0.8)), EulerIntegrator.INSTANCE, new StateTime(state, RealScalar.ZERO));
   }
 
   @Override

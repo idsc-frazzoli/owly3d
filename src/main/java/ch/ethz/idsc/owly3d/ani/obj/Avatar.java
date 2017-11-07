@@ -33,11 +33,11 @@ public class Avatar implements Animated, SE3Interface {
 
   public Avatar(Tensor pos) {
     posVelIntegrator = new SimpleEpisodeIntegrator( //
-        new Rice2StateSpaceModel(RealScalar.of(1)), //
+        Rice2StateSpaceModel.of(RealScalar.ZERO), //
         EulerIntegrator.INSTANCE, //
         new StateTime(Join.of(pos, Array.zeros(3)), RealScalar.ZERO));
     rateIntegrator = new SimpleEpisodeIntegrator( //
-        new Rice1StateSpaceModel(RealScalar.of(4)), //
+        Rice1StateSpaceModel.of(RealScalar.of(1.8)), //
         EulerIntegrator.INSTANCE, //
         new StateTime(Array.zeros(3), RealScalar.ZERO));
   }
@@ -59,7 +59,7 @@ public class Avatar implements Animated, SE3Interface {
       StateTime rate = rateIntegrator.tail();
       // ---
       Tensor drag = rate.state();
-      rotation = rotation.dot(Rodriguez.of(drag));
+      rotation = rotation.dot(Rodriguez.exp(drag));
       boolean status = OrthogonalMatrixQ.of(rotation);
       if (!status)
         System.out.println("not orthogonal");

@@ -3,8 +3,8 @@ package ch.ethz.idsc.owly3d.ani.obj;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.model.car.VehicleModel;
-import ch.ethz.idsc.owly.model.car.shop.RimoSinusIonModel;
+import ch.ethz.idsc.owly.car.core.VehicleModel;
+import ch.ethz.idsc.owly.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owly3d.ani.Drawable;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.tensor.RealScalar;

@@ -24,7 +24,7 @@ public class Tracker implements Animated, SE3Interface {
 
   public Tracker(Tensor posvel) {
     posVelIntegrator = new SimpleEpisodeIntegrator( //
-        new Rice2StateSpaceModel(RealScalar.of(1)), //
+        Rice2StateSpaceModel.of(RealScalar.ZERO), //
         EulerIntegrator.INSTANCE, //
         new StateTime(posvel, RealScalar.ZERO));
   }

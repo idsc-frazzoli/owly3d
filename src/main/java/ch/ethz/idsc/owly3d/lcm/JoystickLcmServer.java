@@ -39,6 +39,7 @@ public class JoystickLcmServer implements StartAndStoppable {
       final String string = GLFW.glfwGetJoystickName(index);
       if (Objects.nonNull(string)) {
         final String generic = formatName(string);
+        // System.out.println(generic);
         if (generic.equalsIgnoreCase(joystickType.name())) {
           System.out.println("found joystick " + joystickType);
           joystick = index;
