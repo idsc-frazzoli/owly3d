@@ -19,7 +19,7 @@ import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.lie.Rodriguez;
 
 public class Se2Car implements Animated, SE3Interface {
-  private static final Tensor U_NULL = Array.zeros(2).unmodifiable();
+  private static final Tensor U_NULL = Array.zeros(3).unmodifiable();
   // ---
   private final EpisodeIntegrator pushIntegrator = new SimpleEpisodeIntegrator( //
       Rice1StateSpaceModel.of(RealScalar.of(1.2)), //
@@ -59,7 +59,7 @@ public class Se2Car implements Animated, SE3Interface {
   /** @param angle
    * @param speed */
   public void addControl(Scalar angle, Scalar speed) {
-    u = u.add(Tensors.of(angle, speed.multiply(maxSpeed))); // angle and speed
+    u = u.add(Tensors.of(speed.multiply(maxSpeed), RealScalar.ZERO, angle)); // angle and speed
   }
 
   /** @return delta, speed */
