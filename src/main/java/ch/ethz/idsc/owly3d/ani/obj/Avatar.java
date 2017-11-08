@@ -33,11 +33,11 @@ public class Avatar implements Animated, SE3Interface {
 
   public Avatar(Tensor pos) {
     posVelIntegrator = new SimpleEpisodeIntegrator( //
-        Rice2StateSpaceModel.of(RealScalar.ZERO), //
+        Rice2StateSpaceModel.of(RealScalar.of(1)), //
         EulerIntegrator.INSTANCE, //
         new StateTime(Join.of(pos, Array.zeros(3)), RealScalar.ZERO));
     rateIntegrator = new SimpleEpisodeIntegrator( //
-        Rice1StateSpaceModel.of(RealScalar.of(1.8)), //
+        Rice1StateSpaceModel.of(RealScalar.of(2)), //
         EulerIntegrator.INSTANCE, //
         new StateTime(Array.zeros(3), RealScalar.ZERO));
   }
