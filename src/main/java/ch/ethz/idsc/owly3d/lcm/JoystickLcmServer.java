@@ -17,6 +17,7 @@ import ch.ethz.idsc.retina.lcm.BinaryBlobPublisher;
 import ch.ethz.idsc.retina.util.StartAndStoppable;
 
 public class JoystickLcmServer implements StartAndStoppable {
+  // TODO redundant to JoystickInspector
   private static String formatName(String string) {
     return string.replace(' ', '_').replaceAll("\\W", "").toLowerCase();
   }

@@ -15,7 +15,8 @@ import ch.ethz.idsc.retina.dev.joystick.JoystickType;
 
 public class JoystickInspector {
   private static String channel(String string) {
-    return "joystick." + string.replace(' ', '_').replaceAll("\\W", "").toLowerCase();
+    // TODO check if trim
+    return "joystick." + string.trim().replace(' ', '_').replaceAll("\\W", "").toLowerCase();
   }
 
   public static void main(String[] args) {
@@ -45,9 +46,7 @@ public class JoystickInspector {
         {
           ByteBuffer hats = GLFW.glfwGetJoystickHats(joystick);
           System.out.println("hats: " + hats.limit());
-          // GLFW.glfwGetJoystick
         }
-        // Set<Integer> set = new HashSet<>();
         for (int c = 0; c < 1000000; ++c) {
           {
             byte[] data = new byte[30];
@@ -55,7 +54,7 @@ public class JoystickInspector {
             FloatBuffer axes = GLFW.glfwGetJoystickAxes(joystick);
             ByteBuffer buttons = GLFW.glfwGetJoystickButtons(joystick);
             ByteBuffer hats = GLFW.glfwGetJoystickHats(joystick);
-            JoystickEncoder.encode(JoystickType.LOGITECH_GAMEPAD_F710, axes, buttons, hats, dest);
+            JoystickEncoder.encode(JoystickType.GENERIC_XBOX_PAD, axes, buttons, hats, dest);
             dest.flip();
             // System.out.println(dest.limit());
             JoystickEvent joystickEvent = JoystickDecoder.decode(dest);
