@@ -3,7 +3,7 @@ package ch.ethz.idsc.owly3d.ani.obj;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.math.state.StateTime;
+import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly3d.ani.Drawable;
 import ch.ethz.idsc.tensor.Tensor;
 

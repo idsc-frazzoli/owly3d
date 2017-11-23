@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.glc.core.GlcNode;
-import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
-import ch.ethz.idsc.owly.glc.core.TrajectorySample;
-import ch.ethz.idsc.owly.math.state.StateTime;
+import ch.ethz.idsc.owl.glc.adapter.GlcTrajectories;
+import ch.ethz.idsc.owl.glc.core.GlcNode;
+import ch.ethz.idsc.owl.glc.core.TrajectoryPlanner;
+import ch.ethz.idsc.owl.math.state.StateTime;
+import ch.ethz.idsc.owl.math.state.TrajectorySample;
 import ch.ethz.idsc.owly3d.util.Render3dUtils;
 
 public class TrajectoryRender3d {
@@ -25,7 +26,9 @@ public class TrajectoryRender3d {
       Optional<GlcNode> optional = trajectoryPlanner.getBestOrElsePeek();
       if (optional.isPresent()) {
         GlcNode node = optional.get();
-        final List<TrajectorySample> list = trajectoryPlanner.detailedTrajectoryTo(node);
+        // final List<TrajectorySample> list = trajectoryPlanner.detailedTrajectoryTo(node);
+        List<TrajectorySample> trajectory = //
+            GlcTrajectories.detailedTrajectoryTo(trajectoryPlanner.getStateIntegrator(), node);
         // { // draw control vectors u along trajectory
         // int rgb = 64;
         // graphics.setColor(new Color(rgb, rgb, rgb, 192));
@@ -42,7 +45,7 @@ public class TrajectoryRender3d {
         // }
         // }
         { // draw trajectory as thick green line with white background
-          List<StateTime> LIST = list.stream().map(TrajectorySample::stateTime).collect(Collectors.toList());
+          List<StateTime> LIST = trajectory.stream().map(TrajectorySample::stateTime).collect(Collectors.toList());
           GL11.glLineWidth(2);
           GL11.glBegin(GL11.GL_LINE_STRIP);
           GL11.glColor3f(0, 1, 0);

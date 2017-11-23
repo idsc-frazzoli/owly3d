@@ -1,11 +1,11 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
+import ch.ethz.idsc.owl.math.state.EpisodeIntegrator;
+import ch.ethz.idsc.owl.math.state.SimpleEpisodeIntegrator;
+import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly.demo.rice.Rice2StateSpaceModel;
-import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
-import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
-import ch.ethz.idsc.owly.math.state.SimpleEpisodeIntegrator;
-import ch.ethz.idsc.owly.math.state.StateTime;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;

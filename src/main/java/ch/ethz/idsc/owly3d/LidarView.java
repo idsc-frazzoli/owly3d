@@ -20,7 +20,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.data.TimeKeeper;
+import ch.ethz.idsc.owl.data.TimeKeeper;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.lcm.lidar.Hdl32eLcmRender;
 import ch.ethz.idsc.owly3d.lcm.lidar.LcmLidarRender;

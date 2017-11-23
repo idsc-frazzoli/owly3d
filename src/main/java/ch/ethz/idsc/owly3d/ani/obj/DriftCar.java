@@ -1,18 +1,18 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
+import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
+import ch.ethz.idsc.owl.math.flow.Integrator;
+import ch.ethz.idsc.owl.math.flow.RungeKutta4Integrator;
+import ch.ethz.idsc.owl.math.state.BoundedEpisodeIntegrator;
+import ch.ethz.idsc.owl.math.state.EpisodeIntegrator;
+import ch.ethz.idsc.owl.math.state.SimpleEpisodeIntegrator;
+import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly.car.drift.DriftExtStateSpaceModel;
 import ch.ethz.idsc.owly.car.drift.DriftParameters;
 import ch.ethz.idsc.owly.car.drift.DriftStates;
 import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
-import ch.ethz.idsc.owly.math.SingleIntegratorStateSpaceModel;
-import ch.ethz.idsc.owly.math.flow.EulerIntegrator;
-import ch.ethz.idsc.owly.math.flow.Integrator;
-import ch.ethz.idsc.owly.math.flow.RungeKutta4Integrator;
-import ch.ethz.idsc.owly.math.state.BoundedEpisodeIntegrator;
-import ch.ethz.idsc.owly.math.state.EpisodeIntegrator;
-import ch.ethz.idsc.owly.math.state.SimpleEpisodeIntegrator;
-import ch.ethz.idsc.owly.math.state.StateTime;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;

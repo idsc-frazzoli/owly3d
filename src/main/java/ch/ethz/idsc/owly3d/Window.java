@@ -14,7 +14,7 @@ import org.lwjgl.system.MemoryUtil;
 
 import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.owly3d.util.WindowUtils;
-import ch.ethz.idsc.owly3d.util.math.ProjectionMatrix;
+import ch.ethz.idsc.retina.util.math.ProjectionMatrix;
 import ch.ethz.idsc.tensor.Tensor;
 
 public class Window {
@@ -66,7 +66,7 @@ public class Window {
     GL11.glViewport(0, 0, dimension.width, dimension.height);
     GL11.glMatrixMode(GL11.GL_PROJECTION); // confirmed
     GL11.glLoadIdentity();
-    Tensor matrix = ProjectionMatrix.perspective(1.1, dimension.width / (double) dimension.height, 1, 100);
+    Tensor matrix = ProjectionMatrix.of(1.1, dimension.width / (double) dimension.height, 1, 100);
     GL11.glMultMatrixd(Primitives3d.matrix44(matrix)); // confirmed
   }
 }

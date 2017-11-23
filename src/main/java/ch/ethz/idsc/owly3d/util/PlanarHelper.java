@@ -3,7 +3,7 @@ package ch.ethz.idsc.owly3d.util;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.math.Cross2D;
+import ch.ethz.idsc.owl.math.planar.Cross2D;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Tensor;
 

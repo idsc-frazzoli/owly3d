@@ -7,7 +7,7 @@ import java.util.DoubleSummaryStatistics;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.data.tree.StateCostNode;
+import ch.ethz.idsc.owl.data.tree.StateCostNode;
 import ch.ethz.idsc.owly3d.util.Render3dUtils;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.img.Hue;

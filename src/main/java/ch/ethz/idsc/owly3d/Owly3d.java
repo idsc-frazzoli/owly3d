@@ -32,8 +32,8 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import ch.ethz.idsc.owly.data.TimeKeeper;
-import ch.ethz.idsc.owly.glc.core.TrajectoryPlanner;
+import ch.ethz.idsc.owl.data.TimeKeeper;
+import ch.ethz.idsc.owl.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.ani.obj.DriftCar;
 import ch.ethz.idsc.owly3d.ani.obj.DriftCarDrawable;
