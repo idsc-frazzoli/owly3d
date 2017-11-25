@@ -8,4 +8,8 @@ public class GenericXboxPadLcmServerModule extends AbstractJoystickLcmServerModu
   public JoystickType getJoystickType() {
     return JoystickType.GENERIC_XBOX_PAD;
   }
+
+  public static void main(String[] args) throws Exception {
+    new GenericXboxPadLcmServerModule().first();
+  }
 }

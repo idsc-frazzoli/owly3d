@@ -58,7 +58,7 @@ public class JoystickInspector {
             dest.flip();
             // System.out.println(dest.limit());
             JoystickEvent joystickEvent = JoystickDecoder.decode(dest);
-            System.out.println(joystickEvent.toInfoString());
+            System.out.println(joystickEvent);
             // LogitechLogitechCordlessRumblepad2 genericXboxPadJoystick = (LogitechLogitechCordlessRumblepad2) abstractJoystick;
             // genericXboxPadJoystick.isButtonPressedA();
             // {
