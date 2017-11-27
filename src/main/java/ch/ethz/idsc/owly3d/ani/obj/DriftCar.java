@@ -1,6 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owl.math.flow.Integrator;
@@ -12,7 +13,6 @@ import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly.car.drift.DriftExtStateSpaceModel;
 import ch.ethz.idsc.owly.car.drift.DriftParameters;
 import ch.ethz.idsc.owly.car.drift.DriftStates;
-import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;

@@ -1,6 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owl.math.flow.Integrator;
@@ -16,7 +17,6 @@ import ch.ethz.idsc.owly.car.model.CarStateSpaceModel;
 import ch.ethz.idsc.owly.car.model.CarStatic;
 import ch.ethz.idsc.owly.car.model.HomogenousTrack;
 import ch.ethz.idsc.owly.car.shop.RimoSinusIonModel;
-import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;

@@ -1,13 +1,13 @@
 // code by jph
 package ch.ethz.idsc.owly3d.ani.obj;
 
+import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
+import ch.ethz.idsc.owl.bot.se2.Se2CarIntegrator;
+import ch.ethz.idsc.owl.bot.se2.Se2StateSpaceModel;
 import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owl.math.state.EpisodeIntegrator;
 import ch.ethz.idsc.owl.math.state.SimpleEpisodeIntegrator;
 import ch.ethz.idsc.owl.math.state.StateTime;
-import ch.ethz.idsc.owly.demo.rice.Rice1StateSpaceModel;
-import ch.ethz.idsc.owly.demo.se2.Se2CarIntegrator;
-import ch.ethz.idsc.owly.demo.se2.Se2StateSpaceModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
