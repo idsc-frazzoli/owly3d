@@ -28,30 +28,25 @@ public enum DemoUtils {
     URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
     File file = new File(url.getFile());
     if (file.isFile()) {
-      FileInputStream fis = new FileInputStream(file);
-      FileChannel fc = fis.getChannel();
-      buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-      fc.close();
-      fis.close();
+      try (FileInputStream fis = new FileInputStream(file)) {
+        try (FileChannel fc = fis.getChannel()) {
+          buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+        }
+      }
     } else {
       buffer = BufferUtils.createByteBuffer(bufferSize);
       InputStream source = url.openStream();
       if (source == null)
         throw new FileNotFoundException(resource);
-      try {
-        ReadableByteChannel rbc = Channels.newChannel(source);
-        try {
-          while (true) {
-            int bytes = rbc.read(buffer);
-            if (bytes == -1)
-              break;
-            if (buffer.remaining() == 0)
-              buffer = resizeBuffer(buffer, buffer.capacity() * 2);
-          }
-          buffer.flip();
-        } finally {
-          rbc.close();
+      try (ReadableByteChannel rbc = Channels.newChannel(source)) {
+        while (true) {
+          int bytes = rbc.read(buffer);
+          if (bytes == -1)
+            break;
+          if (buffer.remaining() == 0)
+            buffer = resizeBuffer(buffer, buffer.capacity() * 2);
         }
+        buffer.flip();
       } finally {
         source.close();
       }
