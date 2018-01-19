@@ -51,13 +51,13 @@ public class LidarPointCloud {
   }
 
   public synchronized void draw() {
-    GL11.glPushMatrix();
-    GL11.glTranslated(translate[0], translate[1], translate[2]);
+    // GL11.glPushMatrix();
+    // GL11.glTranslated(translate[0], translate[1], translate[2]);
     GL11.glPointSize(2);
     GL11.glColor4fv(color); // TODO deprecated
     GL11.glInterleavedArrays(GL11.GL_V3F, 0, floatBuffer);
     GL11.glDrawElements(GL11.GL_POINTS, intBuffer);
-    GL11.glPopMatrix();
+    // GL11.glPopMatrix();
   }
 
   /** @return number of points in 2d or 3d */

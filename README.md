@@ -12,6 +12,8 @@ Visualizations of
 
 [user control of go kart model](https://www.youtube.com/watch?v=mCbPydpywOw)
 
+[visualization of lidar](https://www.youtube.com/watch?v=EbApAL42ZpE)
+
 ## Tests
 
 The repository has `1` unit test.

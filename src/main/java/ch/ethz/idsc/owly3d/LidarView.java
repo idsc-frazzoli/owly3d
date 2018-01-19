@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import ch.ethz.idsc.owl.data.TimeKeeper;
+import ch.ethz.idsc.owl.math.map.Se2Utils;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.lcm.lidar.Hdl32eLcmRender;
 import ch.ethz.idsc.owly3d.lcm.lidar.LcmLidarRender;
@@ -30,12 +31,18 @@ import ch.ethz.idsc.owly3d.lcm.lidar.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.IntervalTask;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
+import ch.ethz.idsc.retina.dev.zhkart.pos.GokartPoseLcmLidar;
+import ch.ethz.idsc.retina.gui.gokart.top.SensorsConfig;
 import ch.ethz.idsc.retina.util.IntervalClock;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
+import ch.ethz.idsc.tensor.io.Pretty;
+import ch.ethz.idsc.tensor.mat.IdentityMatrix;
 import ch.ethz.idsc.tensor.mat.Inverse;
+import ch.ethz.idsc.tensor.qty.Quantity;
+import ch.ethz.idsc.tensor.sca.Round;
 
 public class LidarView extends Workspace {
   Avatar avatar;
@@ -80,6 +87,8 @@ public class LidarView extends Workspace {
     pointClouds.add(new Vlp16LcmRender("center"));
     pointClouds.add(new Mark8LcmRender("center"));
     pointClouds.add(new Urg04lxLcmRender("front"));
+    GokartPoseLcmLidar gokartPoseLcmLidar = new GokartPoseLcmLidar();
+    gokartPoseLcmLidar.gokartPoseLcmClient.startSubscriptions();
     TimeKeeper timeKeeper = new TimeKeeper();
     while (!GLFW.glfwWindowShouldClose(windowObject.window)) {
       final Scalar now = timeKeeper.now();
@@ -105,7 +114,24 @@ public class LidarView extends Workspace {
       }
       {
         render_scene();
+        GL11.glPushMatrix();
+        Tensor pose_xya = gokartPoseLcmLidar.getPose();
+        pose_xya.set(s -> ((Quantity) s).value(), 0);
+        pose_xya.set(s -> ((Quantity) s).value(), 1);
+        Tensor se2_go = Se2Utils.toSE2Matrix(pose_xya);
+        Tensor se2_se = Se2Utils.toSE2Matrix(SensorsConfig.GLOBAL.vlp16);
+        Tensor se2mat = se2_go.dot(se2_se);
+        Tensor matrix = IdentityMatrix.of(4);
+        matrix.set(se2mat.Get(0, 2), 0, 3);
+        matrix.set(se2mat.Get(1, 2), 1, 3);
+        matrix.set(se2mat.Get(0, 0), 0, 0);
+        matrix.set(se2mat.Get(0, 1), 0, 1);
+        matrix.set(se2mat.Get(1, 0), 1, 0);
+        matrix.set(se2mat.Get(1, 1), 1, 1);
+        bulletin.append(Pretty.of(matrix.map(Round._3)));
+        GL11.glMultMatrixd(Primitives3d.matrix44(matrix)); // confirmed
         pointClouds.forEach(LcmLidarRender::draw);
+        GL11.glPopMatrix();
         for (LcmLidarRender llr : pointClouds)
           bulletin.append("" + llr.size());
       }
@@ -116,6 +142,7 @@ public class LidarView extends Workspace {
       if (keyboardHander.hit(GLFW.GLFW_KEY_ESCAPE))
         GLFW.glfwSetWindowShouldClose(windowObject.window, true); // We will detect this in the rendering loop
     }
+    gokartPoseLcmLidar.gokartPoseLcmClient.stopSubscriptions();
   }
 
   private void render_scene() {
