@@ -20,6 +20,8 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import ch.ethz.idsc.gokart.core.pos.GokartPoseLcmLidar;
+import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
 import ch.ethz.idsc.owl.data.TimeKeeper;
 import ch.ethz.idsc.owl.math.map.Se2Utils;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
@@ -31,8 +33,6 @@ import ch.ethz.idsc.owly3d.lcm.lidar.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.IntervalTask;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
-import ch.ethz.idsc.retina.dev.zhkart.pos.GokartPoseLcmLidar;
-import ch.ethz.idsc.retina.gui.gokart.top.SensorsConfig;
 import ch.ethz.idsc.retina.util.IntervalClock;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
@@ -129,7 +129,7 @@ public class LidarView extends Workspace {
         matrix.set(se2mat.Get(1, 0), 1, 0);
         matrix.set(se2mat.Get(1, 1), 1, 1);
         bulletin.append(Pretty.of(matrix.map(Round._3)));
-        GL11.glMultMatrixd(Primitives3d.matrix44(matrix)); // confirmed
+        // GL11.glMultMatrixd(Primitives3d.matrix44(matrix)); // confirmed
         pointClouds.forEach(LcmLidarRender::draw);
         GL11.glPopMatrix();
         for (LcmLidarRender llr : pointClouds)

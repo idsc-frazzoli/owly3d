@@ -3,9 +3,9 @@ package ch.ethz.idsc.owly3d.ani.obj;
 
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.owly.car.model.CarControl;
-import ch.ethz.idsc.owly.car.model.CarState;
-import ch.ethz.idsc.owly.car.model.TireForces;
+import ch.ethz.idsc.owl.car.model.CarControl;
+import ch.ethz.idsc.owl.car.model.CarState;
+import ch.ethz.idsc.owl.car.model.TireForces;
 import ch.ethz.idsc.owly3d.ani.Drawable;
 import ch.ethz.idsc.owly3d.util.PlanarHelper;
 import ch.ethz.idsc.owly3d.util.Primitives3d;

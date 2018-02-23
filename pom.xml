@@ -183,7 +183,7 @@
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
 			<artifactId>tensor</artifactId>
-			<version>0.4.7</version>
+			<version>0.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
@@ -193,7 +193,7 @@
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
 			<artifactId>owl</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.ethz.idsc</groupId>
