@@ -2,6 +2,13 @@
 package ch.ethz.idsc.owly3d.ani.obj;
 
 import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
+import ch.ethz.idsc.owl.car.core.VehicleModel;
+import ch.ethz.idsc.owl.car.model.CarControl;
+import ch.ethz.idsc.owl.car.model.CarState;
+import ch.ethz.idsc.owl.car.model.CarStateSpaceModel;
+import ch.ethz.idsc.owl.car.model.CarStatic;
+import ch.ethz.idsc.owl.car.model.HomogenousTrack;
+import ch.ethz.idsc.owl.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owl.math.flow.Integrator;
@@ -10,13 +17,6 @@ import ch.ethz.idsc.owl.math.state.BoundedEpisodeIntegrator;
 import ch.ethz.idsc.owl.math.state.EpisodeIntegrator;
 import ch.ethz.idsc.owl.math.state.SimpleEpisodeIntegrator;
 import ch.ethz.idsc.owl.math.state.StateTime;
-import ch.ethz.idsc.owly.car.core.VehicleModel;
-import ch.ethz.idsc.owly.car.model.CarControl;
-import ch.ethz.idsc.owly.car.model.CarState;
-import ch.ethz.idsc.owly.car.model.CarStateSpaceModel;
-import ch.ethz.idsc.owly.car.model.CarStatic;
-import ch.ethz.idsc.owly.car.model.HomogenousTrack;
-import ch.ethz.idsc.owly.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
