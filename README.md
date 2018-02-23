@@ -1,6 +1,6 @@
 # ch.ethz.idsc.owly3d
 
-<a href="https://travis-ci.org/idsc-frazzoli/owly3d"><img src="https://travis-ci.org/idsc-frazzoli/owly3d.svg?branch=master" alt="Build Status"></a>
+* joystick interface for gokart
 
 Visualizations of 
 * state space model dynamics and motion planning.
