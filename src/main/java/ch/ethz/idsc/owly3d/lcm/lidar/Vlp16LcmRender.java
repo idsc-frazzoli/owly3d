@@ -1,6 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
+import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
 import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
 import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
@@ -22,7 +23,8 @@ public class Vlp16LcmRender implements LcmLidarRender {
     VelodyneDecoder velodyneDecoder = new Vlp16Decoder();
     VelodyneLcmClient velodyneLcmClient = new VelodyneLcmClient(velodyneModel, velodyneDecoder, lidarId);
     LidarAngularFiringCollector lidarAngularFiringCollector = new LidarAngularFiringCollector(max_points, 3);
-    LidarSpacialProvider lidarSpacialProvider = new Vlp16SpacialProvider();
+    double angle_offset = SensorsConfig.GLOBAL.vlp16_twist.number().doubleValue();
+    LidarSpacialProvider lidarSpacialProvider = new Vlp16SpacialProvider(angle_offset);
     lidarSpacialProvider.addListener(lidarAngularFiringCollector);
     LidarRotationProvider lidarRotationProvider = new LidarRotationProvider();
     lidarRotationProvider.addListener(lidarAngularFiringCollector);
