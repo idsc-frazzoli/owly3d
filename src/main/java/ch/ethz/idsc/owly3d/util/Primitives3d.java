@@ -21,7 +21,7 @@ public enum Primitives3d {
   }
 
   public static double[] matrix44(Tensor matrix) {
-    double[] values = Primitives.toArrayDouble(Transpose.of(matrix));
+    double[] values = Primitives.toDoubleArray(Transpose.of(matrix));
     if (values.length != 16)
       throw new RuntimeException();
     return values;

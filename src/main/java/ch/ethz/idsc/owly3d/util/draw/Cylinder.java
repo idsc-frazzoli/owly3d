@@ -16,14 +16,14 @@ public enum Cylinder {
     double ang;
     Tensor col = Tensors.vector(1, 1, 1, mas.Get(3).number().doubleValue());
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-    GL11.glColor4dv(Primitives.toArrayDouble(col));
+    GL11.glColor4dv(Primitives.toDoubleArray(col));
     // glNormal3d(0,0,math::Sign(rad));
     GL11.glVertex3d(0, y, 0);
     for (int c0 = 0; c0 <= slices; ++c0) {
       if (c0 % swp == 0)
         lam = 1 - lam;
       ang = (c0 + 0.5) * fac;
-      GL11.glColor4dv(Primitives.toArrayDouble( //
+      GL11.glColor4dv(Primitives.toDoubleArray( //
           col.multiply(RealScalar.of(lam)).add(mas.multiply(RealScalar.of(1 - lam)))));
       GL11.glVertex3d(rad * Math.cos(ang), y, rad * Math.sin(ang));
     }
@@ -36,14 +36,14 @@ public enum Cylinder {
     double ang;
     Tensor col = Tensors.vector(1, 1, 1, mas.Get(3).number().doubleValue());
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-    GL11.glColor4dv(Primitives.toArrayDouble(col));
+    GL11.glColor4dv(Primitives.toDoubleArray(col));
     // glNormal3d(0,0,math::Sign(rad));
     GL11.glVertex3d(0, y, 0);
     for (int c0 = 0; c0 <= slices; ++c0) {
       if (c0 % swp == 0)
         lam = 1 - lam;
       ang = -(c0 + 0.5) * fac; // FIXME
-      GL11.glColor4dv(Primitives.toArrayDouble( //
+      GL11.glColor4dv(Primitives.toDoubleArray( //
           col.multiply(RealScalar.of(lam)).add(mas.multiply(RealScalar.of(1 - lam)))));
       GL11.glVertex3d(rad * Math.cos(ang), y, rad * Math.sin(ang));
     }
@@ -68,7 +68,7 @@ public enum Cylinder {
         cc0 = Math.cos(ang);
         sc0 = Math.sin(ang);
         // glNormal3d(cc0=cos(ang),sc0=sin(ang),0);
-        GL11.glColor4dv(Primitives.toArrayDouble( //
+        GL11.glColor4dv(Primitives.toDoubleArray( //
             col.multiply(RealScalar.of(lam)).add(mas.multiply(RealScalar.of(1 - lam)))));
         GL11.glVertex3d(rad * cc0, gnd, rad * sc0);
         GL11.glVertex3d(rad * cc0, hgt, rad * sc0);
@@ -87,14 +87,14 @@ public enum Cylinder {
     double ang;
     Tensor col = Tensors.vector(1, 1, 1, mas.Get(3).number().doubleValue());
     GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-    GL11.glColor4dv(Primitives.toArrayDouble(col));
+    GL11.glColor4dv(Primitives.toDoubleArray(col));
     // glNormal3d(0,0,math::Sign(rad));
     GL11.glVertex3d(0, 0, 0);
     for (int c0 = 0; c0 <= slices; ++c0) {
       if (c0 % swp == 0)
         lam = 1 - lam;
       ang = (c0 + 0.5) * fac;
-      GL11.glColor4dv(Primitives.toArrayDouble( //
+      GL11.glColor4dv(Primitives.toDoubleArray( //
           col.multiply(RealScalar.of(lam)).add(mas.multiply(RealScalar.of(1 - lam)))));
       GL11.glVertex3d(rad * Math.cos(ang), rad * Math.sin(ang), 0);
     }
@@ -116,7 +116,7 @@ public enum Cylinder {
       cc0 = Math.cos(ang);
       sc0 = Math.sin(ang);
       // glNormal3d(cc0=cos(ang),sc0=sin(ang),0);
-      GL11.glColor4dv(Primitives.toArrayDouble( //
+      GL11.glColor4dv(Primitives.toDoubleArray( //
           col.multiply(RealScalar.of(lam)).add(mas.multiply(RealScalar.of(1 - lam)))));
       GL11.glVertex3d(rad * cc0, rad * sc0, hgt);
       GL11.glVertex3d(rad * cc0, rad * sc0, gnd);

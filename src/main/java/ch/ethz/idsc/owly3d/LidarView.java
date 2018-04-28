@@ -115,7 +115,7 @@ public class LidarView extends Workspace {
       {
         render_scene();
         GL11.glPushMatrix();
-        Tensor pose_xya = gokartPoseLcmLidar.getPose();
+        Tensor pose_xya = gokartPoseLcmLidar.getPose().copy();
         pose_xya.set(s -> ((Quantity) s).value(), 0);
         pose_xya.set(s -> ((Quantity) s).value(), 1);
         Tensor se2_go = Se2Utils.toSE2Matrix(pose_xya);
