@@ -43,7 +43,7 @@ public class Mesh {
     Random random = new Random();
     float[] array = toArrayFloat(vertices);
     {
-      int[] indices = Primitives.toArrayInt(triangles);
+      int[] indices = Primitives.toIntArray(triangles);
       IntBuffer intBuffer = IntBuffer.wrap(indices);
       intBuffer.position(indices.length);
       intBuffer.flip();
@@ -60,7 +60,7 @@ public class Mesh {
       }
     }
     {
-      int[] indices = Primitives.toArrayInt(quads);
+      int[] indices = Primitives.toIntArray(quads);
       IntBuffer intBuffer = IntBuffer.wrap(indices);
       intBuffer.position(indices.length);
       intBuffer.flip();
