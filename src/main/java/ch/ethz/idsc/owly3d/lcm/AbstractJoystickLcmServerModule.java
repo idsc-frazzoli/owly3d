@@ -2,8 +2,8 @@ package ch.ethz.idsc.owly3d.lcm;
 
 import java.util.Objects;
 
-import ch.ethz.idsc.retina.dev.joystick.JoystickType;
-import ch.ethz.idsc.retina.sys.AbstractModule;
+import ch.ethz.idsc.retina.joystick.JoystickType;
+import ch.ethz.idsc.retina.util.sys.AbstractModule;
 
 public abstract class AbstractJoystickLcmServerModule extends AbstractModule {
   /** refresh period in [ms] for joystick events */
@@ -12,7 +12,7 @@ public abstract class AbstractJoystickLcmServerModule extends AbstractModule {
   private JoystickLcmServer joystickLcmServer;
 
   @Override
-  protected final void first() throws Exception {
+  protected final void first() {
     joystickLcmServer = new JoystickLcmServer(getJoystickType(), PERIOD_MS);
     joystickLcmServer.start();
   }

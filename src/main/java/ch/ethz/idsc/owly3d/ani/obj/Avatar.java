@@ -16,7 +16,7 @@ import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.alg.Join;
-import ch.ethz.idsc.tensor.lie.Rodriguez;
+import ch.ethz.idsc.tensor.lie.Rodrigues;
 import ch.ethz.idsc.tensor.mat.IdentityMatrix;
 import ch.ethz.idsc.tensor.mat.OrthogonalMatrixQ;
 
@@ -59,7 +59,7 @@ public class Avatar implements Animated, SE3Interface {
       StateTime rate = rateIntegrator.tail();
       // ---
       Tensor drag = rate.state();
-      rotation = rotation.dot(Rodriguez.exp(drag));
+      rotation = rotation.dot(Rodrigues.exp(drag));
       boolean status = OrthogonalMatrixQ.of(rotation);
       if (!status)
         System.out.println("not orthogonal");

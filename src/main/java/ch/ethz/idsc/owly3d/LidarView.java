@@ -22,8 +22,8 @@ import org.lwjgl.opengl.GL11;
 
 import ch.ethz.idsc.gokart.core.pos.GokartPoseLcmLidar;
 import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
+import ch.ethz.idsc.owl.data.IntervalClock;
 import ch.ethz.idsc.owl.data.TimeKeeper;
-import ch.ethz.idsc.owl.math.map.Se2Utils;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
 import ch.ethz.idsc.owly3d.lcm.lidar.Hdl32eLcmRender;
 import ch.ethz.idsc.owly3d.lcm.lidar.LcmLidarRender;
@@ -33,7 +33,7 @@ import ch.ethz.idsc.owly3d.lcm.lidar.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.IntervalTask;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
-import ch.ethz.idsc.retina.util.IntervalClock;
+import ch.ethz.idsc.sophus.lie.se2.Se2Utils;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
@@ -119,7 +119,7 @@ public class LidarView extends Workspace {
         pose_xya.set(s -> ((Quantity) s).value(), 0);
         pose_xya.set(s -> ((Quantity) s).value(), 1);
         Tensor se2_go = Se2Utils.toSE2Matrix(pose_xya);
-        Tensor se2_se = Se2Utils.toSE2Matrix(SensorsConfig.GLOBAL.vlp16);
+        Tensor se2_se = Se2Utils.toSE2Matrix(SensorsConfig.GLOBAL.vlp16_pose);
         Tensor se2mat = se2_go.dot(se2_se);
         Tensor matrix = IdentityMatrix.of(4);
         matrix.set(se2mat.Get(0, 2), 0, 3);

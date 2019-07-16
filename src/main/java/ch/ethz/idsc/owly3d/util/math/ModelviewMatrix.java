@@ -38,7 +38,7 @@ public enum ModelviewMatrix {
     if (Scalars.nonZero(nrm)) {
       dir = dir.divide(nrm);
       Tensor upv = UnitVector.of(4, 2);
-      Tensor frw = Normalize.of(Cross.of(upv.extract(0, 3), dir.extract(0, 3)));
+      Tensor frw = Normalize.with(Norm._2).apply(Cross.of(upv.extract(0, 3), dir.extract(0, 3)));
       frw.append(RealScalar.ZERO);
       Tensor side = Cross.of(dir.extract(0, 3), frw.extract(0, 3));
       side.append(RealScalar.ZERO);

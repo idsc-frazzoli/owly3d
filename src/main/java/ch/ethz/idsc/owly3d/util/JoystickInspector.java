@@ -8,10 +8,10 @@ import java.util.Objects;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
-import ch.ethz.idsc.retina.dev.joystick.JoystickDecoder;
-import ch.ethz.idsc.retina.dev.joystick.JoystickEncoder;
-import ch.ethz.idsc.retina.dev.joystick.JoystickEvent;
-import ch.ethz.idsc.retina.dev.joystick.JoystickType;
+import ch.ethz.idsc.retina.joystick.JoystickDecoder;
+import ch.ethz.idsc.retina.joystick.JoystickEncoder;
+import ch.ethz.idsc.retina.joystick.JoystickEvent;
+import ch.ethz.idsc.retina.joystick.JoystickType;
 
 public class JoystickInspector {
   private static String channel(String string) {

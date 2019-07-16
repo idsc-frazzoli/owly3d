@@ -2,16 +2,16 @@
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
 import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
+import ch.ethz.idsc.gokart.lcm.lidar.VelodyneLcmClient;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
-import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
-import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
-import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.VelodyneDecoder;
-import ch.ethz.idsc.retina.dev.lidar.VelodyneModel;
-import ch.ethz.idsc.retina.dev.lidar.vlp16.Vlp16Decoder;
-import ch.ethz.idsc.retina.dev.lidar.vlp16.Vlp16SpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
+import ch.ethz.idsc.retina.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.lidar.LidarRayBlockEvent;
+import ch.ethz.idsc.retina.lidar.LidarRotationProvider;
+import ch.ethz.idsc.retina.lidar.LidarSpacialProvider;
+import ch.ethz.idsc.retina.lidar.VelodyneDecoder;
+import ch.ethz.idsc.retina.lidar.VelodyneModel;
+import ch.ethz.idsc.retina.lidar.vlp16.Vlp16Decoder;
+import ch.ethz.idsc.retina.lidar.vlp16.Vlp16SpacialProvider;
 
 public class Vlp16LcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;

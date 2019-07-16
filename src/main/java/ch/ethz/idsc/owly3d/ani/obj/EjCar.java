@@ -4,9 +4,7 @@ package ch.ethz.idsc.owly3d.ani.obj;
 import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
 import ch.ethz.idsc.owl.car.core.VehicleModel;
 import ch.ethz.idsc.owl.car.model.CarControl;
-import ch.ethz.idsc.owl.car.model.CarState;
 import ch.ethz.idsc.owl.car.model.CarStateSpaceModel;
-import ch.ethz.idsc.owl.car.model.CarStatic;
 import ch.ethz.idsc.owl.car.model.HomogenousTrack;
 import ch.ethz.idsc.owl.car.shop.RimoSinusIonModel;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
@@ -25,7 +23,7 @@ import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
-import ch.ethz.idsc.tensor.lie.Rodriguez;
+import ch.ethz.idsc.tensor.lie.Rodrigues;
 
 public class EjCar implements Animated, SE3Interface {
   private static final Tensor U_NULL = Array.zeros(5).unmodifiable();
@@ -113,7 +111,7 @@ public class EjCar implements Animated, SE3Interface {
   @Override
   public Tensor getSE3() {
     CarState carState = getCarState();
-    Tensor rotation = Rodriguez.exp( //
+    Tensor rotation = Rodrigues.exp( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Ksi));
     return MatrixFunctions.getSE3( //
         rotation, Tensors.of(carState.px, carState.py, RealScalar.ZERO));

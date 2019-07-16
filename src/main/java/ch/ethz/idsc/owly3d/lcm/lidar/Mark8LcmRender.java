@@ -1,13 +1,13 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
+import ch.ethz.idsc.gokart.lcm.lidar.Mark8LcmClient;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
-import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
-import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
-import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.mark8.Mark8SpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.Mark8LcmClient;
+import ch.ethz.idsc.retina.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.lidar.LidarRayBlockEvent;
+import ch.ethz.idsc.retina.lidar.LidarRotationProvider;
+import ch.ethz.idsc.retina.lidar.LidarSpacialProvider;
+import ch.ethz.idsc.retina.lidar.mark8.Mark8SpacialProvider;
 
 public class Mark8LcmRender implements LcmLidarRender {
   /** in the workshop, the lidar produces 37000 points per revolution

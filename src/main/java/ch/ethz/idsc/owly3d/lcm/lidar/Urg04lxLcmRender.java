@@ -1,14 +1,14 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
+import ch.ethz.idsc.gokart.lcm.lidar.Urg04lxLcmClient;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
-import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
-import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
-import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.urg04lx.Urg04lxDevice;
-import ch.ethz.idsc.retina.dev.lidar.urg04lx.Urg04lxSpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.Urg04lxLcmClient;
+import ch.ethz.idsc.retina.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.lidar.LidarRayBlockEvent;
+import ch.ethz.idsc.retina.lidar.LidarRotationProvider;
+import ch.ethz.idsc.retina.lidar.LidarSpacialProvider;
+import ch.ethz.idsc.retina.lidar.urg04lx.Urg04lxDevice;
+import ch.ethz.idsc.retina.lidar.urg04lx.Urg04lxSpacialProvider;
 
 public class Urg04lxLcmRender implements LcmLidarRender {
   private final LidarPointCloud laserPointCloud;

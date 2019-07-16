@@ -1,7 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm;
 
-import ch.ethz.idsc.retina.dev.joystick.JoystickType;
+import ch.ethz.idsc.retina.joystick.JoystickType;
 
 public class LogitechGamepadLcmServerModule extends AbstractJoystickLcmServerModule {
   @Override

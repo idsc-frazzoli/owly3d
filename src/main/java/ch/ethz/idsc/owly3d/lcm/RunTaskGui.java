@@ -4,8 +4,8 @@ package ch.ethz.idsc.owly3d.lcm;
 import java.util.ArrayList;
 import java.util.List;
 
-import ch.ethz.idsc.retina.sys.LoggerModule;
-import ch.ethz.idsc.retina.sys.SpyModule;
+import ch.ethz.idsc.gokart.lcm.LoggerModule;
+import ch.ethz.idsc.gokart.lcm.SpyModule;
 import ch.ethz.idsc.retina.sys.TaskGui;
 
 enum RunTaskGui {

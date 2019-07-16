@@ -2,7 +2,6 @@
 package ch.ethz.idsc.owly3d.ani.obj;
 
 import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
-import ch.ethz.idsc.owl.car.drift.DriftExtStateSpaceModel;
 import ch.ethz.idsc.owl.car.drift.DriftParameters;
 import ch.ethz.idsc.owl.car.drift.DriftStates;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
@@ -21,7 +20,7 @@ import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
-import ch.ethz.idsc.tensor.lie.Rodriguez;
+import ch.ethz.idsc.tensor.lie.Rodrigues;
 
 public class DriftCar implements Animated, SE3Interface {
   private static final Tensor U_NULL = Array.zeros(2).unmodifiable();
@@ -108,7 +107,7 @@ public class DriftCar implements Animated, SE3Interface {
   @Override
   public Tensor getSE3() {
     Tensor carState = getCarState();
-    Tensor rotation = Rodriguez.exp( //
+    Tensor rotation = Rodrigues.exp( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, carState.Get(2)));
     return MatrixFunctions.getSE3( //
         rotation, Tensors.of(carState.Get(0), carState.Get(1), RealScalar.ZERO));

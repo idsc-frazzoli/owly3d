@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
+import ch.ethz.idsc.owl.data.IntervalClock;
 import ch.ethz.idsc.owl.data.TimeKeeper;
 import ch.ethz.idsc.owl.glc.core.TrajectoryPlanner;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
@@ -60,7 +61,6 @@ import ch.ethz.idsc.owly3d.util.gfx.CubemapUtils;
 import ch.ethz.idsc.owly3d.util.gfx.Programs;
 import ch.ethz.idsc.owly3d.util.gfx.ShipProgram;
 import ch.ethz.idsc.owly3d.util.usr.JoystickControl;
-import ch.ethz.idsc.retina.util.IntervalClock;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Scalars;
@@ -68,7 +68,7 @@ import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.mat.Inverse;
-import ch.ethz.idsc.tensor.sca.Clip;
+import ch.ethz.idsc.tensor.sca.Clips;
 import ch.ethz.idsc.tensor.sca.Round;
 
 public class Owly3d extends Workspace {
@@ -188,7 +188,7 @@ public class Owly3d extends Workspace {
           Tensor tensor = keyboardControl.getPushAWSD();
           ejCar.addControl( //
               tensor.Get(1), //
-              Clip.unit().apply(tensor.Get(0).negate()), // brake
+              Clips.unit().apply(tensor.Get(0).negate()), // brake
               keyboardControl.pressed(GLFW.GLFW_KEY_E), // handbrake
               keyboardControl.pressed(GLFW.GLFW_KEY_W), //
               keyboardControl.pressed(GLFW.GLFW_KEY_Q));
@@ -205,7 +205,7 @@ public class Owly3d extends Workspace {
         {
           // JoystickControl.printAxes();
           Tensor axes = JoystickControl.getAxes();
-          Scalar mono = Clip.unit().apply(axes.Get(1).negate());
+          Scalar mono = Clips.unit().apply(axes.Get(1).negate());
           // TODO based on joystick
           // ejCar.addControl( //
           // axes.Get(0).negate(), // delta
@@ -215,7 +215,7 @@ public class Owly3d extends Workspace {
           if (false) // <- activate for gamepad joystick
             ejCar.addControl( //
                 axes.Get(0).negate(), // delta
-                Clip.unit().apply(axes.Get(1)), // brake
+                Clips.unit().apply(axes.Get(1)), // brake
                 RealScalar.ZERO, // handbrake
                 unit_one(axes.Get(2)), //
                 unit_one(axes.Get(5))); // throttle

@@ -4,16 +4,16 @@ package ch.ethz.idsc.owly3d.lcm.lidar;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 
+import ch.ethz.idsc.gokart.lcm.lidar.VelodyneLcmClient;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
-import ch.ethz.idsc.retina.dev.lidar.LidarAngularFiringCollector;
-import ch.ethz.idsc.retina.dev.lidar.LidarRayBlockEvent;
-import ch.ethz.idsc.retina.dev.lidar.LidarRotationProvider;
-import ch.ethz.idsc.retina.dev.lidar.LidarSpacialProvider;
-import ch.ethz.idsc.retina.dev.lidar.VelodyneDecoder;
-import ch.ethz.idsc.retina.dev.lidar.VelodyneModel;
-import ch.ethz.idsc.retina.dev.lidar.hdl32e.Hdl32eDecoder;
-import ch.ethz.idsc.retina.dev.lidar.hdl32e.Hdl32eSpacialProvider;
-import ch.ethz.idsc.retina.lcm.lidar.VelodyneLcmClient;
+import ch.ethz.idsc.retina.lidar.LidarAngularFiringCollector;
+import ch.ethz.idsc.retina.lidar.LidarRayBlockEvent;
+import ch.ethz.idsc.retina.lidar.LidarRotationProvider;
+import ch.ethz.idsc.retina.lidar.LidarSpacialProvider;
+import ch.ethz.idsc.retina.lidar.VelodyneDecoder;
+import ch.ethz.idsc.retina.lidar.VelodyneModel;
+import ch.ethz.idsc.retina.lidar.hdl32e.Hdl32eDecoder;
+import ch.ethz.idsc.retina.lidar.hdl32e.Hdl32eSpacialProvider;
 
 public class Hdl32eLcmRender implements LcmLidarRender {
   private static final int MAX_POINTS = 2304 * 32;
