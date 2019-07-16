@@ -4,6 +4,8 @@ package ch.ethz.idsc.owly3d.ani.obj;
 import org.lwjgl.opengl.GL11;
 
 import ch.ethz.idsc.owl.car.model.CarControl;
+import ch.ethz.idsc.owl.car.model.CarState;
+import ch.ethz.idsc.owl.car.model.TireForces;
 import ch.ethz.idsc.owly3d.ani.Drawable;
 import ch.ethz.idsc.owly3d.util.PlanarHelper;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
@@ -94,7 +96,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
       for (int index = 0; index < vehicleModel.wheels(); ++index) { // front left
         GL11.glPushMatrix();
         {
-          Tensor lever = vehicleModel.wheel(index).lever().copy();
+          Tensor lever = vehicleModel.wheelConstant(index).lever().copy();
           { // body frame at tire at COG-height level
             lever.set(scalar -> scalar.negate(), 2);
             Tensor mat = MatrixFunctions.getTranslation(lever);
@@ -113,7 +115,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
           }
           { // draw lines of angular rate
             Tensor vec = Array.zeros(3);
-            vec.set(vehicleModel.wheel(index).lever().Get(2), 2); //
+            vec.set(vehicleModel.wheelConstant(index).lever().Get(2), 2); //
             Tensor mat = MatrixFunctions.getSE3( //
                 Rodrigues.exp(Tensors.of(RealScalar.ZERO, RealScalar.ZERO, deltas.Get(index))), //
                 vec); // altitude == 0
@@ -121,13 +123,13 @@ public class EjCarDrawable extends EjCar implements Drawable {
             GL11.glBegin(GL11.GL_LINES);
             GL11.glColor4d(1, 0, 0, .7);
             GL11.glVertex2d(0, 0);
-            GL11.glVertex2d(vehicleModel.wheel(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
+            GL11.glVertex2d(vehicleModel.wheelConstant(index).radius().multiply(wrate.Get(index)).number().doubleValue(), 0);
             GL11.glEnd();
           }
           { // draw wheel
-            double w2 = vehicleModel.wheel(index).width().number().doubleValue() / 2;
+            double w2 = vehicleModel.wheelConstant(index).width().number().doubleValue() / 2;
             GL11.glPushMatrix();
-            double radius = vehicleModel.wheel(index).radius().number().doubleValue();
+            double radius = vehicleModel.wheelConstant(index).radius().number().doubleValue();
             Tensor mat = MatrixFunctions.getSE3( //
                 Rodrigues.exp(Tensors.of(RealScalar.ZERO, angles.Get(index), RealScalar.ZERO)), //
                 Tensors.vector(0, 0, radius));

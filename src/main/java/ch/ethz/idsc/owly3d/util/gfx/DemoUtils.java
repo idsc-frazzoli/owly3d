@@ -35,20 +35,21 @@ public enum DemoUtils {
       }
     } else {
       buffer = BufferUtils.createByteBuffer(bufferSize);
-      InputStream source = url.openStream();
-      if (source == null)
-        throw new FileNotFoundException(resource);
-      try (ReadableByteChannel rbc = Channels.newChannel(source)) {
-        while (true) {
-          int bytes = rbc.read(buffer);
-          if (bytes == -1)
-            break;
-          if (buffer.remaining() == 0)
-            buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+      try (InputStream inputStream = url.openStream()) {
+        if (inputStream == null)
+          throw new FileNotFoundException(resource);
+        try (ReadableByteChannel rbc = Channels.newChannel(inputStream)) {
+          while (true) {
+            int bytes = rbc.read(buffer);
+            if (bytes == -1)
+              break;
+            if (buffer.remaining() == 0)
+              buffer = resizeBuffer(buffer, buffer.capacity() * 2);
+          }
+          buffer.flip();
+        } finally {
+          inputStream.close();
         }
-        buffer.flip();
-      } finally {
-        source.close();
       }
     }
     return buffer;

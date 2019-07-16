@@ -2,8 +2,8 @@
 package ch.ethz.idsc.owly3d.ani.obj;
 
 import ch.ethz.idsc.owl.bot.rice.Rice1StateSpaceModel;
+import ch.ethz.idsc.owl.car.drift.DriftExtStateSpaceModel;
 import ch.ethz.idsc.owl.car.drift.DriftParameters;
-import ch.ethz.idsc.owl.car.drift.DriftStates;
 import ch.ethz.idsc.owl.math.SingleIntegratorStateSpaceModel;
 import ch.ethz.idsc.owl.math.flow.EulerIntegrator;
 import ch.ethz.idsc.owl.math.flow.Integrator;
@@ -53,7 +53,9 @@ public class DriftCar implements Animated, SE3Interface {
         new DriftExtStateSpaceModel(driftParameters), //
         // new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
         INTEGRATOR, //
-        new StateTime(DriftStates.x0_demo1(), RealScalar.ZERO), //
+        new StateTime(Tensors.vector(1, 2, 3, 1, 2, 3)
+        // DriftStates.x0_demo1()
+            , RealScalar.ZERO), //
         MAX_TIME_STEP);
   }
 
@@ -64,7 +66,9 @@ public class DriftCar implements Animated, SE3Interface {
         // new CarStateSpaceModel(vehicleModel, HomogenousTrack.DRY_ROAD), //
         new DriftExtStateSpaceModel(driftParameters), //
         INTEGRATOR, //
-        new StateTime(DriftStates.x0_demo1(), now), //
+        new StateTime(Tensors.vector(1, 2, 3, 1, 2, 3)
+        // DriftStates.x0_demo1()
+            , now), //
         MAX_TIME_STEP);
   }
 

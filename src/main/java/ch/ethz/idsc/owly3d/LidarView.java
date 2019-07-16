@@ -20,7 +20,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
-import ch.ethz.idsc.gokart.core.pos.GokartPoseLcmLidar;
+import ch.ethz.idsc.gokart.core.pos.GokartPoseEvent;
+import ch.ethz.idsc.gokart.core.pos.GokartPoseEvents;
+import ch.ethz.idsc.gokart.core.pos.GokartPoseLcmClient;
+import ch.ethz.idsc.gokart.core.pos.GokartPoseListener;
 import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
 import ch.ethz.idsc.owl.data.IntervalClock;
 import ch.ethz.idsc.owl.data.TimeKeeper;
@@ -44,7 +47,8 @@ import ch.ethz.idsc.tensor.mat.Inverse;
 import ch.ethz.idsc.tensor.qty.Quantity;
 import ch.ethz.idsc.tensor.sca.Round;
 
-public class LidarView extends Workspace {
+public class LidarView extends Workspace implements GokartPoseListener {
+  private GokartPoseEvent gokartPoseEvent = GokartPoseEvents.motionlessUninitialized();
   Avatar avatar;
   Scenario scenario = new Scenario();
   IntervalTask updateHz = new IntervalTask();
@@ -87,8 +91,9 @@ public class LidarView extends Workspace {
     pointClouds.add(new Vlp16LcmRender("center"));
     pointClouds.add(new Mark8LcmRender("center"));
     pointClouds.add(new Urg04lxLcmRender("front"));
-    GokartPoseLcmLidar gokartPoseLcmLidar = new GokartPoseLcmLidar();
-    gokartPoseLcmLidar.gokartPoseLcmClient.startSubscriptions();
+    GokartPoseLcmClient gokartPoseLcmClient = new GokartPoseLcmClient();
+    gokartPoseLcmClient.addListener(this);
+    gokartPoseLcmClient.startSubscriptions();
     TimeKeeper timeKeeper = new TimeKeeper();
     while (!GLFW.glfwWindowShouldClose(windowObject.window)) {
       final Scalar now = timeKeeper.now();
@@ -115,7 +120,7 @@ public class LidarView extends Workspace {
       {
         render_scene();
         GL11.glPushMatrix();
-        Tensor pose_xya = gokartPoseLcmLidar.getPose().copy();
+        Tensor pose_xya = gokartPoseEvent.getPose();
         pose_xya.set(s -> ((Quantity) s).value(), 0);
         pose_xya.set(s -> ((Quantity) s).value(), 1);
         Tensor se2_go = Se2Utils.toSE2Matrix(pose_xya);
@@ -142,7 +147,7 @@ public class LidarView extends Workspace {
       if (keyboardHander.hit(GLFW.GLFW_KEY_ESCAPE))
         GLFW.glfwSetWindowShouldClose(windowObject.window, true); // We will detect this in the rendering loop
     }
-    gokartPoseLcmLidar.gokartPoseLcmClient.stopSubscriptions();
+    gokartPoseLcmClient.stopSubscriptions();
   }
 
   private void render_scene() {
@@ -180,5 +185,10 @@ public class LidarView extends Workspace {
     jFrame.setVisible(false);
     jFrame.dispose();
     owly3d.windowObject.terminate();
+  }
+
+  @Override
+  public void getEvent(GokartPoseEvent getEvent) {
+    gokartPoseEvent = getEvent;
   }
 }
