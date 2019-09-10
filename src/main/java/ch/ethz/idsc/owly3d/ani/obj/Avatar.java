@@ -10,13 +10,13 @@ import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
+import ch.ethz.idsc.sophus.lie.so3.So3Exponential;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.alg.Join;
-import ch.ethz.idsc.tensor.lie.Rodrigues;
 import ch.ethz.idsc.tensor.mat.IdentityMatrix;
 import ch.ethz.idsc.tensor.mat.OrthogonalMatrixQ;
 
@@ -59,7 +59,7 @@ public class Avatar implements Animated, SE3Interface {
       StateTime rate = rateIntegrator.tail();
       // ---
       Tensor drag = rate.state();
-      rotation = rotation.dot(Rodrigues.exp(drag));
+      rotation = rotation.dot(So3Exponential.INSTANCE.exp(drag));
       boolean status = OrthogonalMatrixQ.of(rotation);
       if (!status)
         System.out.println("not orthogonal");
