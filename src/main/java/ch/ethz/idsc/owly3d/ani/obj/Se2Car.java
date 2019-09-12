@@ -11,12 +11,12 @@ import ch.ethz.idsc.owl.math.state.StateTime;
 import ch.ethz.idsc.owly3d.ani.Animated;
 import ch.ethz.idsc.owly3d.ani.SE3Interface;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
+import ch.ethz.idsc.sophus.lie.so3.So3Exponential;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
-import ch.ethz.idsc.tensor.lie.Rodrigues;
 
 public class Se2Car implements Animated, SE3Interface {
   private static final Tensor U_NULL = Array.zeros(3).unmodifiable();
@@ -74,7 +74,7 @@ public class Se2Car implements Animated, SE3Interface {
   @Override
   public Tensor getSE3() {
     Tensor state = getStateTime().state();
-    Tensor rotation = Rodrigues.exp( //
+    Tensor rotation = So3Exponential.INSTANCE.exp( //
         Tensors.of(RealScalar.ZERO, RealScalar.ZERO, state.Get(2)));
     return MatrixFunctions.getSE3( //
         rotation, //

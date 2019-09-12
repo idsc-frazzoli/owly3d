@@ -1,7 +1,7 @@
 // code by jph
 package ch.ethz.idsc.owly3d.lcm.lidar;
 
-import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
+import ch.ethz.idsc.gokart.calib.SensorsConfig;
 import ch.ethz.idsc.gokart.lcm.lidar.VelodyneLcmClient;
 import ch.ethz.idsc.owly3d.demo.LidarPointCloud;
 import ch.ethz.idsc.retina.lidar.LidarAngularFiringCollector;

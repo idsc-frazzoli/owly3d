@@ -20,11 +20,11 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
+import ch.ethz.idsc.gokart.calib.SensorsConfig;
 import ch.ethz.idsc.gokart.core.pos.GokartPoseEvent;
 import ch.ethz.idsc.gokart.core.pos.GokartPoseEvents;
 import ch.ethz.idsc.gokart.core.pos.GokartPoseLcmClient;
 import ch.ethz.idsc.gokart.core.pos.GokartPoseListener;
-import ch.ethz.idsc.gokart.gui.top.SensorsConfig;
 import ch.ethz.idsc.owl.data.IntervalClock;
 import ch.ethz.idsc.owl.data.TimeKeeper;
 import ch.ethz.idsc.owly3d.ani.obj.Avatar;
@@ -36,7 +36,7 @@ import ch.ethz.idsc.owly3d.lcm.lidar.Vlp16LcmRender;
 import ch.ethz.idsc.owly3d.util.AxesHelper;
 import ch.ethz.idsc.owly3d.util.IntervalTask;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
-import ch.ethz.idsc.sophus.lie.se2.Se2Utils;
+import ch.ethz.idsc.sophus.lie.se2.Se2Matrix;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
@@ -123,8 +123,8 @@ public class LidarView extends Workspace implements GokartPoseListener {
         Tensor pose_xya = gokartPoseEvent.getPose();
         pose_xya.set(s -> ((Quantity) s).value(), 0);
         pose_xya.set(s -> ((Quantity) s).value(), 1);
-        Tensor se2_go = Se2Utils.toSE2Matrix(pose_xya);
-        Tensor se2_se = Se2Utils.toSE2Matrix(SensorsConfig.GLOBAL.vlp16_pose);
+        Tensor se2_go = Se2Matrix.of(pose_xya);
+        Tensor se2_se = Se2Matrix.of(SensorsConfig.GLOBAL.vlp16_pose);
         Tensor se2mat = se2_go.dot(se2_se);
         Tensor matrix = IdentityMatrix.of(4);
         matrix.set(se2mat.Get(0, 2), 0, 3);
@@ -178,7 +178,7 @@ public class LidarView extends Workspace implements GokartPoseListener {
     {
       container.add(owly3d.jTextArea, BorderLayout.CENTER);
     }
-    jFrame.setVisible(true);
+    jFrame.setVisible(false);
     owly3d.windowObject.init();
     owly3d.init();
     owly3d.loop();

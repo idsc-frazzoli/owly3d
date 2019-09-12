@@ -11,13 +11,13 @@ import ch.ethz.idsc.owly3d.util.PlanarHelper;
 import ch.ethz.idsc.owly3d.util.Primitives3d;
 import ch.ethz.idsc.owly3d.util.draw.Cylinder;
 import ch.ethz.idsc.owly3d.util.math.MatrixFunctions;
+import ch.ethz.idsc.sophus.lie.so3.So3Exponential;
 import ch.ethz.idsc.tensor.RealScalar;
 import ch.ethz.idsc.tensor.Scalar;
 import ch.ethz.idsc.tensor.Tensor;
 import ch.ethz.idsc.tensor.Tensors;
 import ch.ethz.idsc.tensor.alg.Array;
 import ch.ethz.idsc.tensor.alg.Sort;
-import ch.ethz.idsc.tensor.lie.Rodrigues;
 
 public class EjCarDrawable extends EjCar implements Drawable {
   // TODO draw more info about the car dynamics: energy, momentum etc.
@@ -117,7 +117,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
             Tensor vec = Array.zeros(3);
             vec.set(vehicleModel.wheelConstant(index).lever().Get(2), 2); //
             Tensor mat = MatrixFunctions.getSE3( //
-                Rodrigues.exp(Tensors.of(RealScalar.ZERO, RealScalar.ZERO, deltas.Get(index))), //
+                So3Exponential.INSTANCE.exp(Tensors.of(RealScalar.ZERO, RealScalar.ZERO, deltas.Get(index))), //
                 vec); // altitude == 0
             GL11.glMultMatrixd(Primitives3d.matrix44(mat));
             GL11.glBegin(GL11.GL_LINES);
@@ -131,7 +131,7 @@ public class EjCarDrawable extends EjCar implements Drawable {
             GL11.glPushMatrix();
             double radius = vehicleModel.wheelConstant(index).radius().number().doubleValue();
             Tensor mat = MatrixFunctions.getSE3( //
-                Rodrigues.exp(Tensors.of(RealScalar.ZERO, angles.Get(index), RealScalar.ZERO)), //
+                So3Exponential.INSTANCE.exp(Tensors.of(RealScalar.ZERO, angles.Get(index), RealScalar.ZERO)), //
                 Tensors.vector(0, 0, radius));
             GL11.glMultMatrixd(Primitives3d.matrix44(mat));
             Cylinder.drawY(-w2, w2, radius, 30, 15, Tensors.vector(0, 1, 0, .8));
